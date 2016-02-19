@@ -2,9 +2,9 @@
 b__kushtibot_main.o
 [PROJECT FILES]
 /home/tony/opensource/kushtibot/kushtibot.gpr
-20160217171409
+20160219164410
 /home/tony/opensource/ada_open_zwave/openzwave.gpr
-20160217171809
+20160219163544
 /home/tony/opensource/ada_open_zwave/ada_open_zwave.gpr
 20160216193113
 /home/tony/opensource/gnoga/deps/simple_components/xpm/xpm_parser.gpr
@@ -27,6 +27,7 @@ b__kushtibot_main.o
 /home/tony/opensource/kushtibot/obj/fifo.o
 /home/tony/opensource/gnoga/deps/simple_components/tables.o
 /home/tony/opensource/kushtibot/obj/open_zwave_helper_functions_pkg.o
+/home/tony/opensource/kushtibot/obj/z_comms_task_pkg.o
 /home/tony/opensource/kushtibot/obj/kushtibot_main.o
 [GENERATED SOURCE FILES]
 b__kushtibot_main.ads
@@ -40,8 +41,10 @@ b__kushtibot_main.ali
 -L/home/tony/opensource/gnoga/deps/simple_components/
 -L/home/tony/opensource/gnoga/deps/simple_components/xpm/
 -L/home/tony/opensource/ada_open_zwave/lib/
--L/home/tony/opensource/ada_open_zwave/openzwave-1.4.1/
+-L/home/tony/opensource/ada_open_zwave/openzwave-1.2.919/
 -L/home/tony/ada/gnat/lib/gcc/x86_64-pc-linux-gnu/4.7.4/adalib/
+/home/tony/ada/tools/openzwave-1.2.919/libopenzwave.so
+/home/tony/ada/tools/openzwave-1.2.919/libopenzwave.so
 -static
 -static-libgcc
 /home/tony/ada/gnat/lib/gcc/x86_64-pc-linux-gnu/4.7.4/adalib/libgnarl.a

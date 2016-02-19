@@ -3,16 +3,104 @@ with "../ada_open_zwave/ada_open_zwave.gpr";
 
 project Kushtibot is
 
+   type Build_Type is
+      ("Debug", "Release");
+   type Target_Type is
+      ("OSX", "Windows", "Freebsd", "Linux", "Unix");
+   type Object_Tracing_Mode is
+      ("Off", "On");
+   type Tasking_Mode is
+      ("Multiple", "Single");
+   type Atomic_Access_Mode is
+      ("Pragma-atomic", "GCC-built-ins", "GCC-long-offsets");
+   type Legacy_Type is
+      ("Ada95", "Ada2005", "Ada2012");
+   type Development_Type is
+      ("Debug", "Release");
    for Source_Dirs use (".", "src");
    for Object_Dir use "obj/";
    for Exec_Dir use "bin/";
    for Main use ("kushtibot_main.adb");
+   Development : Development_Type := external ("Development");
+   Legacy : Legacy_Type := external ("Legacy");
+   Atomic_Access : Atomic_Access_Mode := external ("Atomic_Access");
+   Tasking : Tasking_Mode := external ("Tasking");
+   Traced_Objects : Object_Tracing_Mode := external ("Traced_objects");
+   PRJ_TARGET : Target_Type := external ("PRJ_TARGET");
+   PRJ_BUILD : Build_Type := external ("PRJ_BUILD");
 
    package Ide is
       for Vcs_Kind use "Git";
       for Documentation_Dir use "doc/";
    end Ide;
 
+   package Linker is
+
+      case Development is
+
+         when "Debug" =>
+
+            case Legacy is
+
+               when "Ada95" =>
+
+               when "Ada2005" =>
+
+                  case Atomic_Access is
+
+                     when "Pragma-atomic" =>
+
+                     when "GCC-built-ins" =>
+
+                     when "GCC-long-offsets" =>
+
+                        case Tasking is
+
+                           when "Multiple" =>
+
+                              case Traced_Objects is
+
+                                 when "Off" =>
+
+                                    case PRJ_TARGET is
+
+                                       when "OSX" =>
+
+                                       when "Windows" =>
+
+                                       when "Freebsd" =>
+
+                                       when "Linux" =>
+
+                                       when "Unix" =>
+
+                                          case PRJ_BUILD is
+
+                                             when "Debug" =>
+                                                for Default_Switches ("ada") use ("-lopenzwave");
+
+                                             when "Release" =>
+
+                                          end case;
+                                    end case;
+
+                                 when "On" =>
+
+                              end case;
+
+                           when "Single" =>
+
+                        end case;
+                  end case;
+
+               when "Ada2012" =>
+
+            end case;
+
+         when "Release" =>
+
+      end case;
+   end Linker;
 
 end Kushtibot;
 

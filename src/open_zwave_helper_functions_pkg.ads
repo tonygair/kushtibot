@@ -111,31 +111,6 @@ package Open_Zwave_Helper_Functions_Pkg is
    type Z_Network_Values_Type is array (Open_Zwave.Value_U8) of Command_Class_Values_Type;
 
 
-   --Nodes : Value_U8_List_P;
-
-  -- Command_Classes : Value_P_Array_Type;
-
-
-
---      type To_Server_Z_Message (Type_Of_Message : Message_Type)  is record
---        case Type_Of_Message is
---           when Battery_Life =>
---              Battery : Battery_Level_Type;
---              B_Last_Update : Ada.Calendar.Time;
---           when Temperature_Report =>
---              Ambient_Temperature : EC.Centigrade;
---              T_Last_Update : Ada.Calendar.Time;
---           when Wake_Up_Interval =>
---              Interval : Interval_Type;
---              W_Last_Update : Ada.Calendar.Time;
---           when Reported_Ratio =>
---              Ratio : EC.Ratio;
---              R_Last_Update : Ada.Calendar.Time;
---
---        end case;
---
---     end record;
-
-
+   This_Network : Z_Network_Values_Type;
 
 end Open_Zwave_Helper_Functions_Pkg;

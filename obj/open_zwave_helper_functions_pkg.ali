@@ -25,7 +25,7 @@ RV NO_IMPLEMENTATION_PRAGMAS
 RV NO_ELABORATION_CODE
 RV SPARK_05
 
-U open_zwave_helper_functions_pkg%b  open_zwave_helper_functions_pkg.adb  d9bcd2ce OO PK
+U open_zwave_helper_functions_pkg%b  open_zwave_helper_functions_pkg.adb  80fa2fa4 OO PK
 W ada%s			ada.ads			ada.ali
 W ada.exceptions%s	a-except.adb		a-except.ali
 W ada.tags%s		a-tags.adb		a-tags.ali
@@ -43,7 +43,7 @@ W system.storage_pools.subpools%s  s-stposu.adb	s-stposu.ali
 W system.tasking.protected_objects%s  s-taprob.adb  s-taprob.ali
 W system.unsigned_types%s  s-unstyp.ads		s-unstyp.ali
 
-U open_zwave_helper_functions_pkg%s  open_zwave_helper_functions_pkg.ads  992f41c3 EE OO PF PK
+U open_zwave_helper_functions_pkg%s  open_zwave_helper_functions_pkg.ads  c069bca9 EE OO PF PK
 W ada%s			ada.ads			ada.ali
 W ada.calendar%s	a-calend.adb		a-calend.ali
 W ada.exceptions%s	a-except.adb		a-except.ali
@@ -92,7 +92,7 @@ D gnoga.ads		20160217150121 2501e324 gnoga%s
 D interfac.ads		20140406181359 69adb1b9 interfaces%s
 D i-c.ads		20140406181358 5421119b interfaces.c%s
 D open_zwave.ads	20160216193113 d2053562 open_zwave%s
-D open_zwave_helper_functions_pkg.ads  20160217170626 0655033d open_zwave_helper_functions_pkg%s
+D open_zwave_helper_functions_pkg.ads  20160219151237 5f13fe57 open_zwave_helper_functions_pkg%s
 D open_zwave_helper_functions_pkg.adb  20160216122101 d090fce2 open_zwave_helper_functions_pkg%b
 D system.ads		20140406181354 90249111 system%s
 D s-atacco.ads		20140406181355 4c36d12f system.address_to_access_conversions%s
@@ -196,7 +196,7 @@ X 20 open_zwave.ads
 88R9*Notification_Info 92e14 21|28r62 31r50 35r39 41r40 22|9r59 77r39 105r40
 89e7*M_Type{56E9} 22|12r70 13r25 80r26
 X 21 open_zwave_helper_functions_pkg.ads
-10K9*Open_Zwave_Helper_Functions_Pkg 141l5 141e36 22|4b14 256l6 256t37
+10K9*Open_Zwave_Helper_Functions_Pkg 116l5 116e36 22|4b14 256l6 256t37
 12K12*SU=12:35 23r6 75r22 81r23
 15I9*Battery_Level_Type<integer>
 17E9*Message_Type 17e93
@@ -251,7 +251,8 @@ X 21 open_zwave_helper_functions_pkg.ads
 107m7 This_Node_Id{20|42M9} 22|162r13 172r20
 108r7 List_Table{55|50R9[95]} 22|155r17 188r13 191r13 206r29 212r34 221r40
 . 230r40 239r40
-111A9*Z_Network_Values_Type(98W19)<20|42M9>
+111A9*Z_Network_Values_Type(98W19)<20|42M9> 114r19
+114a4*This_Network{111A9}
 X 22 open_zwave_helper_functions_pkg.adb
 87r15 E{5|62R9} 87r78
 95r15 E{5|62R9} 95r78
