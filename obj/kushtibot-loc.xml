@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<Locations >
+  <Project>
+    <vfs_file>/home/tony/opensource/kushtibot/kushtibot.gpr</vfs_file>
+    <file_marker current="true" column=" 6" line=" 2" >
+      <vfs_file>/home/tony/opensource/kushtibot/src/kushtibot_main.adb</vfs_file>
+    </file_marker>
+  </Project>
+  <Project >
+    <file_marker current="true" column=" 6" line=" 2">
+      <vfs_file >/home/tony/opensource/kushtibot/src/kushtibot_main.adb</vfs_file>
+    </file_marker>
+  </Project>
+  <Project >
+    <file_marker column=" 6" line=" 2">
+      <vfs_file >/home/tony/opensource/kushtibot/src/kushtibot_main.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1">
+      <vfs_file >/home/tony/opensource/kushtibot/src/fifo.ads</vfs_file>
+    </file_marker>
+    <file_marker current="true" column=" 1" line=" 1">
+      <vfs_file >/home/tony/opensource/kushtibot/src/fifo.adb</vfs_file>
+    </file_marker>
+  </Project>
+  <Project >
+    <file_marker column=" 29" line=" 2">
+      <vfs_file >/home/tony/opensource/kushtibot/src/kushtibot_main.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 9" line=" 10">
+      <vfs_file >/home/tony/opensource/kushtibot/src/open_zwave_helper_functions_pkg.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 9" line=" 3">
+      <vfs_file >/home/tony/opensource/kushtibot/src/open_zwave_helper_functions_pkg.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1">
+      <vfs_file >/home/tony/opensource/kushtibot/src/open_zwave_helper_functions_pkg.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1">
+      <vfs_file >/home/tony/opensource/kushtibot/src/fifo.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1">
+      <vfs_file >/home/tony/opensource/kushtibot/src/fifo.adb</vfs_file>
+    </file_marker>
+    <file_marker current="true" column=" 1" line=" 1">
+      <vfs_file >/home/tony/opensource/kushtibot/src/fifo.ads</vfs_file>
+    </file_marker>
+  </Project>
+  <Project >
+    <file_marker current="true" column=" 1" line=" 1">
+      <vfs_file >/home/tony/opensource/kushtibot/kushtibot.gpr</vfs_file>
+    </file_marker>
+  </Project>
+  <Project >
+    <file_marker current="true" column=" 1" line=" 1">
+      <vfs_file >/home/tony/opensource/kushtibot/kushtibot.gpr</vfs_file>
+    </file_marker>
+  </Project>
+  <Project >
+    <vfs_file  />
+    <file_marker current="true" column=" 1" line=" 1">
+      <vfs_file >/home/tony/opensource/kushtibot/kushtibot.gpr</vfs_file>
+    </file_marker>
+  </Project>
+</Locations>

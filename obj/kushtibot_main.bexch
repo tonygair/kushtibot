@@ -1,0 +1,49 @@
+[GENERATED OBJECT FILE]
+b__kushtibot_main.o
+[PROJECT FILES]
+/home/tony/opensource/kushtibot/kushtibot.gpr
+20160217171409
+/home/tony/opensource/ada_open_zwave/openzwave.gpr
+20160217171809
+/home/tony/opensource/ada_open_zwave/ada_open_zwave.gpr
+20160216193113
+/home/tony/opensource/gnoga/deps/simple_components/xpm/xpm_parser.gpr
+20160217150121
+/home/tony/opensource/gnoga/deps/simple_components/components-connections_server.gpr
+20160217150121
+/home/tony/opensource/gnoga/deps/simple_components/tables.gpr
+20160217150121
+/home/tony/opensource/gnoga/deps/simple_components/strings_edit.gpr
+20160217150121
+/home/tony/opensource/gnoga/deps/simple_components/components.gpr
+20160217150121
+/home/tony/opensource/gnoga/deps/simple_components/components-connections_server-http_server.gpr
+20160217150121
+/home/tony/opensource/gnoga/settings.gpr
+20160217150121
+/home/tony/opensource/gnoga/src/gnoga.gpr
+20160217150121
+[BOUND OBJECT FILES]
+/home/tony/opensource/kushtibot/obj/fifo.o
+/home/tony/opensource/gnoga/deps/simple_components/tables.o
+/home/tony/opensource/kushtibot/obj/open_zwave_helper_functions_pkg.o
+/home/tony/opensource/kushtibot/obj/kushtibot_main.o
+[GENERATED SOURCE FILES]
+b__kushtibot_main.ads
+b__kushtibot_main.adb
+b__kushtibot_main.ali
+[RESULTING OPTIONS]
+-L/home/tony/opensource/kushtibot/obj/
+-L/home/tony/opensource/kushtibot/obj/
+-L/home/tony/opensource/gnoga/lib/
+-L/home/tony/opensource/gnoga/
+-L/home/tony/opensource/gnoga/deps/simple_components/
+-L/home/tony/opensource/gnoga/deps/simple_components/xpm/
+-L/home/tony/opensource/ada_open_zwave/lib/
+-L/home/tony/opensource/ada_open_zwave/openzwave-1.4.1/
+-L/home/tony/ada/gnat/lib/gcc/x86_64-pc-linux-gnu/4.7.4/adalib/
+-static
+-static-libgcc
+/home/tony/ada/gnat/lib/gcc/x86_64-pc-linux-gnu/4.7.4/adalib/libgnarl.a
+/home/tony/ada/gnat/lib/gcc/x86_64-pc-linux-gnu/4.7.4/adalib/libgnat.a
+-lpthread

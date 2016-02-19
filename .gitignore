@@ -1,0 +1,10 @@
+# Created by https://www.gitignore.io/api/ada
+
+### Ada ###
+# Object file
+*.o
+
+# Ada Library Information
+*.ali
+#gps file
+*.db
