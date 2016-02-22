@@ -12,7 +12,7 @@ RV NO_UNCHECKED_CONVERSION
 RV NO_IMPLEMENTATION_PRAGMAS
 RV SPARK_05
 
-U kushtibot_main%b	kushtibot_main.adb	7f5364ad NE OO SU
+U kushtibot_main%b	kushtibot_main.adb	e95929d1 NE OO SU
 W ada%s			ada.ads			ada.ali
 W ada.calendar%s	a-calend.adb		a-calend.ali
 W ada.exceptions%s	a-except.adb		a-except.ali
@@ -20,7 +20,6 @@ W ada.unchecked_conversion%s
 W gnoga%s		gnoga.adb		gnoga.ali
 W interfaces%s		interfac.ads		interfac.ali
 W z_comms_task_pkg%s	z_comms_task_pkg.adb	z_comms_task_pkg.ali
-L "/home/tony/ada/tools/openzwave-1.2.919/libopenzwave.so"
 
 D ada.ads		20140406181354 3ffc8e18 ada%s
 D a-calend.ads		20140406181358 d86d6c8c ada.calendar%s
@@ -34,9 +33,9 @@ D a-strmap.ads		20140406181359 e8bb714a ada.strings.maps%s
 D a-strunb.ads		20140406181359 3f91d4c5 ada.strings.unbounded%s
 D a-tags.ads		20140406181357 dc4d0634 ada.tags%s
 D a-unccon.ads		20140406181359 f9eb8f06 ada.unchecked_conversion%s
-D gnoga.ads		20160217150121 2501e324 gnoga%s
+D gnoga.ads		20160222105528 2501e324 gnoga%s
 D interfac.ads		20140406181359 69adb1b9 interfaces%s
-D kushtibot_main.adb	20160219164304 857c9601 kushtibot_main%b
+D kushtibot_main.adb	20160222104949 1376db7d kushtibot_main%b
 D system.ads		20140406181354 90249111 system%s
 D s-atocou.ads		20140406181359 cd7c94ca system.atomic_counters%s
 D s-atocou.adb		20140406181355 62bad392 system.atomic_counters%b
@@ -55,7 +54,7 @@ D s-stposu.ads		20140406181355 97a6219c system.storage_pools.subpools%s
 D s-stratt.ads		20140406181358 aedef97e system.stream_attributes%s
 D s-traent.ads		20140406181355 b5116092 system.traceback_entries%s
 D s-unstyp.ads		20140406181356 510692af system.unsigned_types%s
-D z_comms_task_pkg.ads	20160219160800 d4d03c37 z_comms_task_pkg%s
+D z_comms_task_pkg.ads	20160222104949 d4d03c37 z_comms_task_pkg%s
 X 1 ada.ads
 16K9*Ada 19e8 15|4r6 5r6 8r6 8r24
 X 2 a-calend.ads
@@ -69,11 +68,11 @@ X 13 gnoga.ads
 X 14 interfac.ads
 38K9*Interfaces 179e15 15|6w6
 X 15 kushtibot_main.adb
-9U11*Kushtibot_Main 9b11 24l5 24t19
-13b4 Startup_Success{boolean} 20m24
+9U11*Kushtibot_Main 9b11 22l5 22t19
+11b4 Startup_Success{boolean} 18m24
 X 34 z_comms_task_pkg.ads
-2K9*Z_Comms_Task_Pkg 15|3w6 18r4 34|17e22
-6U17*Z_Start_The_Task 15|18s21
-6a35 The_Interface{string} 15|19r7
-7b35 Success{boolean} 15|20r7
+2K9*Z_Comms_Task_Pkg 15|3w6 16r4 34|19e22
+8U14*Z_Start_The_Task 15|16s21
+8a32 The_Interface{string} 15|17r7
+9b32 Success{boolean} 15|18r7
 

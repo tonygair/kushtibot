@@ -22,8 +22,8 @@ U fifo%s		fifo.ads		e0f5dc01 BN EE NE OO PK GE
 
 D ada.ads		20140406181354 3ffc8e18 ada%s
 D a-uncdea.ads		20140406181359 f15a5ed1 ada.unchecked_deallocation%s
-D fifo.ads		20160217163946 e0f5dc01 fifo%s
-D fifo.adb		20160217163226 d3167faa fifo%b
+D fifo.ads		20160222104949 e0f5dc01 fifo%s
+D fifo.adb		20160222104949 d3167faa fifo%b
 D system.ads		20140406181354 90249111 system%s
 X 1 ada.ads
 16K9*Ada 19e8 4|1r6 27r32 28r32

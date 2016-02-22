@@ -366,10 +366,8 @@ package body ada_main is
    --   -L/home/tony/opensource/gnoga/deps/simple_components/
    --   -L/home/tony/opensource/gnoga/deps/simple_components/xpm/
    --   -L/home/tony/opensource/ada_open_zwave/lib/
-   --   -L/home/tony/opensource/ada_open_zwave/openzwave-1.2.919/
+   --   -L/home/tony/opensource/ada_open_zwave/openzwave-1.4.1/
    --   -L/home/tony/ada/gnat/lib/gcc/x86_64-pc-linux-gnu/4.7.4/adalib/
-   --   /home/tony/ada/tools/openzwave-1.2.919/libopenzwave.so
-   --   /home/tony/ada/tools/openzwave-1.2.919/libopenzwave.so
    --   -static
    --   -lgnarl
    --   -lgnat
