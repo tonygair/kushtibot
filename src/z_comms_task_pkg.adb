@@ -1,13 +1,23 @@
-with Open_Zwave; use Open_Zwave;
+--with Open_Zwave; use Open_Zwave;
 with Open_Zwave_Helper_Functions_Pkg; use Open_Zwave_Helper_Functions_Pkg;
 with Ada.Exceptions;
 with Ada.Unchecked_Conversion;
 with Interfaces;
 with Gnoga;
 with Ada.Calendar; use Ada.Calendar;
-
+with Intermediate_Z_Types;
 
 package body Z_Comms_Task_Pkg is
+
+   Z_Command_Fifo : Intermediate_Z_Types.Z_Command_Fifo_Pkg.Element_Fifo;
+
+   procedure Set_Parameter
+     (  Command : in Z_Command_Record) is
+   begin
+      Z_Command_Fifo.Push(Item => Command);
+      end Set_Parameter;
+
+
      type Dummy_Type is new integer;
 
    type Node_Boolean_Array_Type is array (Open_Zwave.Value_U8) of boolean;
@@ -109,6 +119,10 @@ package body Z_Comms_Task_Pkg is
       Gnoga.log("VR-Genre :" & The_Value_Id.Genre'img);
       Gnoga.log ("VR-Node(U8) : " & The_Value_Id.Node'img);
       Gnoga.log ("VR-Command_Class_Index(U8) : " & The_Value_Id.Command_Class_Index'img);
+      Gnoga.log(Manufacturer_Name(Controller => The_Value_ID.Home_ID,
+                                  Node       => Node_ID(The_Value_Id.Node)));
+      Gnoga.log(Product_Name(Controller => The_Value_ID.Home_ID,
+                             Node       => Node_ID(The_Value_Id.Node)));
 
 
       case The_Value_Id.Type_ID is

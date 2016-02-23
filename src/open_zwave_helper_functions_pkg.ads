@@ -113,4 +113,8 @@ package Open_Zwave_Helper_Functions_Pkg is
 
    This_Network : Z_Network_Values_Type;
 
+   protected The_Nodes is
+      procedure Submit_Node (Node_Value :: Value_U8);
+      procedure Get_Active_Node_List
+
 end Open_Zwave_Helper_Functions_Pkg;
