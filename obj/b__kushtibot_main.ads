@@ -35,7 +35,7 @@ package ada_main is
    pragma Export (C, main, "main");
 
    type Version_32 is mod 2 ** 32;
-   u00001 : constant Version_32 := 16#7f5364ad#;
+   u00001 : constant Version_32 := 16#e95929d1#;
    pragma Export (C, u00001, "kushtibot_mainB");
    u00002 : constant Version_32 := 16#fbff4c67#;
    pragma Export (C, u00002, "system__standard_libraryB");
@@ -361,7 +361,7 @@ package ada_main is
    pragma Export (C, u00162, "system__stream_attributesB");
    u00163 : constant Version_32 := 16#e5402c91#;
    pragma Export (C, u00163, "system__stream_attributesS");
-   u00164 : constant Version_32 := 16#b3e61f0f#;
+   u00164 : constant Version_32 := 16#d7b3c0eb#;
    pragma Export (C, u00164, "z_comms_task_pkgB");
    u00165 : constant Version_32 := 16#d4d03c37#;
    pragma Export (C, u00165, "z_comms_task_pkgS");
@@ -435,7 +435,7 @@ package ada_main is
    pragma Export (C, u00199, "system__stack_usageB");
    u00200 : constant Version_32 := 16#09222097#;
    pragma Export (C, u00200, "system__stack_usageS");
-   u00201 : constant Version_32 := 16#6736fd1c#;
+   u00201 : constant Version_32 := 16#7618fec8#;
    pragma Export (C, u00201, "open_zwaveB");
    u00202 : constant Version_32 := 16#bba884db#;
    pragma Export (C, u00202, "open_zwaveS");

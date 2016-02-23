@@ -1,8 +1,19 @@
 <?xml version="1.0"?>
 <Locations >
   <Project >
-    <file_marker current="true" column=" 1" line=" 17" >
-      <vfs_file>/home/tony/opensource/kushtibot/src/kushtibot_main.adb</vfs_file>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_file>/home/tony/opensource/kushtibot/src/open_zwave_helper_functions_pkg.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_file>/home/tony/opensource/kushtibot/depreciated/kushtibot_main.adb</vfs_file>
+    </file_marker>
+    <file_marker current="true" column=" 1" line=" 1" >
+      <vfs_file>/home/tony/opensource/kushtibot/src/kushtibot-main.adb</vfs_file>
+    </file_marker>
+  </Project>
+  <Project >
+    <file_marker current="true" column=" 1" line=" 17">
+      <vfs_file >/home/tony/opensource/kushtibot/src/kushtibot_main.adb</vfs_file>
     </file_marker>
   </Project>
   <Project >

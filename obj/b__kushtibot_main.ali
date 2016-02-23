@@ -15,20 +15,20 @@ RV NO_IMPLEMENTATION_PRAGMAS
 RV NO_OBSOLESCENT_FEATURES
 RV SPARK_05
 
-U ada_main%b		b__kushtibot_main.adb	df8ce2af NE OO PK IL
+U ada_main%b		b__kushtibot_main.adb	56b66b04 NE OO PK IL
 W ada%s			ada.ads			ada.ali
 W ada.exceptions%s	a-except.adb		a-except.ali
 W system%s		system.ads		system.ali
 W system.restrictions%s	s-restri.adb		s-restri.ali
 
-U ada_main%s		b__kushtibot_main.ads	879ed096 EE NE OO PK IL
+U ada_main%s		b__kushtibot_main.ads	0ea4593d EE NE OO PK IL
 W system%s		system.ads		system.ali
 
 D ada.ads		20140406181354 3ffc8e18 ada%s
 D a-except.ads		20140406181356 43d57f8c ada.exceptions%s
 D a-unccon.ads		20140406181359 f9eb8f06 ada.unchecked_conversion%s
-D b__kushtibot_main.ads	20160219164410 17ba4187 ada_main%s
-D b__kushtibot_main.adb	20160219164410 907edad6 ada_main%b
+D b__kushtibot_main.ads	20160223160540 9e80c82c ada_main%s
+D b__kushtibot_main.adb	20160223160540 907edad6 ada_main%b
 D system.ads		20140406181354 90249111 system%s
 D s-parame.ads		20140406181358 06da98b2 system.parameters%s
 D s-restri.ads		20140406181358 1b9d0672 system.restrictions%s
@@ -40,7 +40,7 @@ X 1 ada.ads
 X 2 a-except.ads
 53K13*Exceptions 360e19 5|6w10
 X 4 b__kushtibot_main.ads
-3K9*ada_main 771l5 771e13 5|8b14 379l5 379t13
+3K9*ada_main 771l5 771e13 5|8b14 377l5 377t13
 6i4*gnat_argc{integer} 10m22 10r22 5|344m7
 7m4*gnat_argv{6|64M9} 11m22 11r22 5|345m7
 8m4*gnat_envp{6|64M9} 12m22 12r22 5|346m7

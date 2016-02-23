@@ -3,31 +3,30 @@ with "../ada_open_zwave/ada_open_zwave.gpr";
 
 project Kushtibot is
 
-   type Build_Type is
-      ("Debug", "Release");
-   type Target_Type is
-      ("OSX", "Windows", "Freebsd", "Linux", "Unix");
-   type Object_Tracing_Mode is
-      ("Off", "On");
-   type Tasking_Mode is
-      ("Multiple", "Single");
-   type Atomic_Access_Mode is
-      ("Pragma-atomic", "GCC-built-ins", "GCC-long-offsets");
-   type Legacy_Type is
-      ("Ada95", "Ada2005", "Ada2012");
-   type Development_Type is
-      ("Debug", "Release");
-   for Source_Dirs use (".", "src");
    for Object_Dir use "obj/";
    for Exec_Dir use "bin/";
    for Main use ("kushtibot_main.adb");
+   type Development_Type is
+      ("Debug", "Release");
    Development : Development_Type := external ("Development");
+   type Legacy_Type is
+      ("Ada95", "Ada2005", "Ada2012");
    Legacy : Legacy_Type := external ("Legacy");
+   type Atomic_Access_Mode is
+      ("Pragma-atomic", "GCC-built-ins", "GCC-long-offsets");
    Atomic_Access : Atomic_Access_Mode := external ("Atomic_Access");
+   type Tasking_Mode is
+      ("Multiple", "Single");
    Tasking : Tasking_Mode := external ("Tasking");
+   type Object_Tracing_Mode is
+      ("Off", "On");
    Traced_Objects : Object_Tracing_Mode := external ("Traced_objects");
-   PRJ_TARGET : Target_Type := external ("PRJ_TARGET");
-   PRJ_BUILD : Build_Type := external ("PRJ_BUILD");
+   type Target_Type is
+      ("OSX", "Windows", "Freebsd", "Linux", "Unix");
+   Prj_Target : Target_Type := external ("PRJ_TARGET");
+   type Build_Type is
+      ("Debug", "Release");
+   Prj_Build : Build_Type := external ("PRJ_BUILD");
 
    package Ide is
       for Vcs_Kind use "Git";
@@ -62,7 +61,7 @@ project Kushtibot is
 
                                  when "Off" =>
 
-                                    case PRJ_TARGET is
+                                    case Prj_Target is
 
                                        when "OSX" =>
 
@@ -74,7 +73,7 @@ project Kushtibot is
 
                                        when "Unix" =>
 
-                                          case PRJ_BUILD is
+                                          case Prj_Build is
 
                                              when "Debug" =>
                                                 for Default_Switches ("ada") use ("-lopenzwave");
@@ -101,6 +100,78 @@ project Kushtibot is
 
       end case;
    end Linker;
+
+   case Development is
+
+      when "Debug" =>
+
+         case Legacy is
+
+            when "Ada95" =>
+               for Source_Dirs use (".", "src");
+
+            when "Ada2005" =>
+
+               case Atomic_Access is
+
+                  when "Pragma-atomic" =>
+                     for Source_Dirs use (".", "src");
+
+                  when "GCC-built-ins" =>
+                     for Source_Dirs use (".", "src");
+
+                  when "GCC-long-offsets" =>
+
+                     case Tasking is
+
+                        when "Multiple" =>
+
+                           case Traced_Objects is
+
+                              when "Off" =>
+
+                                 case Prj_Target is
+
+                                    when "OSX" =>
+                                       for Source_Dirs use (".", "src");
+
+                                    when "Windows" =>
+                                       for Source_Dirs use (".", "src");
+
+                                    when "Freebsd" =>
+                                       for Source_Dirs use (".", "src");
+
+                                    when "Linux" =>
+                                       for Source_Dirs use (".", "src");
+
+                                    when "Unix" =>
+
+                                       case Prj_Build is
+
+                                          when "Debug" =>
+                                             for Source_Dirs use (".", "src", "depreciated");
+
+                                          when "Release" =>
+                                             for Source_Dirs use (".", "src");
+                                       end case;
+                                 end case;
+
+                              when "On" =>
+                                 for Source_Dirs use (".", "src");
+                           end case;
+
+                        when "Single" =>
+                           for Source_Dirs use (".", "src");
+                     end case;
+               end case;
+
+            when "Ada2012" =>
+               for Source_Dirs use (".", "src");
+         end case;
+
+      when "Release" =>
+         for Source_Dirs use (".", "src");
+   end case;
 
 end Kushtibot;
 
