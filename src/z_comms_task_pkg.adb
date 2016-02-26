@@ -102,6 +102,22 @@ package body Z_Comms_Task_Pkg is
       Initial_Command_Line_Options => "" );
    use ZManager;
 
+   procedure Read_And_Set_Parameter
+     (  ) is
+      Command : in Intermediate_Z_Types.Z_Command_Record;
+      Node :ZManager.Node_ID := ZManager.Node_ID(Command.Node);
+      Index :ZManager.Parameter_Index :=ZManager.Parameter_Index(Command.Index);
+      Value : ZManager.Parameter_Value := ZManager.Parameter_Value(Command.Value);
+
+   begin
+
+
+
+      end Set_Parameter;
+
+
+
+
  procedure Print_Value_Id (The_Value_Id : in Value_Id ) is
 
       Boolean_Value_Id : Boolean;
