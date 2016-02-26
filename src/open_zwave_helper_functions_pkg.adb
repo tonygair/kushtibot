@@ -155,6 +155,11 @@ package body Open_Zwave_Helper_Functions_Pkg is
          return List_Table.Locate(Name => Node'img);
       end Class_Location;
 
+      function Node_Initialised return boolean is
+      begin
+         return Initialised;
+        end Node_Initialised;
+
       procedure Initialise_Node(Node_Value : in Value_U8) is
 
       begin
@@ -247,6 +252,53 @@ package body Open_Zwave_Helper_Functions_Pkg is
 
    end Command_Class_Values_Type;
 
+   -- this po keeps a list of active nodes
+   -- which is constantly up to date.
+ protected body The_Nodes is
+      procedure Submit_Node (Node_Value : in Value_U8) is
+      begin
+         if not Node_Table.IsIn(Name => Node_Value'img) then
+            Node_Table.Add(Name => Node_Value'img,
+                           Data => Node_Value);
+         end if;
+      end Submit_Node;
+
+      function Get_Active_Node_List return Value_U8_Array_Type is
+         Size_Of_Array : Natural := Node_Table.GetSize;
+         Return_Array : Value_U8_Array_Type (1..Size_Of_Array);
+      begin
+         for Count in 1..Size_Of_Array loop
+            Return_Array(Count) := Node_Table.GetTag(Offset => Count);
+         end loop;
+         return Return_Array;
+
+   end Get_Active_Node_List;
+
+
+
+   function Number_Nodes return Natural is
+   begin
+      return Node_Table.GetSize;
+   end Number_Nodes;
+
+
+   end The_Nodes;
+
+   procedure Process_Z_Notification_Into_Data (Chunk : in Open_Zwave.Notification_Info) is
+
+   begin
+      -- check the coordinator ID
+      -- add it if its not there
+      --check the node -- see if its there and if not , add it
+      -- check the command class -- if its not there then add it and the data.
+      if not Home_Id_P.Home_Id_Set then
+         Home_Id_P.Set_Home_Id(Home_Id => Chunk.M_Value_ID.Home_ID);
+      end if;
+      The_Nodes.Submit_Node(Node_Value => Chunk.M_Value_ID.Node);
+      if not This_Network(Chunk.M_Value_ID.Node).Node_Initialised then
+         This_Network(Chunk.M_Value_ID.Node).Initialise_Node(Chunk.M_Value_ID.Node);
+      end if;
+      This_Network(Chunk.M_Value_ID.Node).
 
 
 

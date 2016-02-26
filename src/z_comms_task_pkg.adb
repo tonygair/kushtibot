@@ -6,19 +6,22 @@ with Interfaces;
 with Gnoga;
 with Ada.Calendar; use Ada.Calendar;
 with Intermediate_Z_Types;
-
+with Fifo_Po;
 package body Z_Comms_Task_Pkg is
 
-   Z_Command_Fifo : Intermediate_Z_Types.Z_Command_Fifo_Pkg.Element_Fifo;
+   Package Z_Command_Fifo_Pkg is new
+     Fifo_Po(Element_Type => Intermediate_Z_Types.Z_Command_Record);
+
+   Z_Command_Fifo : Z_Command_Fifo_Pkg.The_PO;
 
    procedure Set_Parameter
-     (  Command : in Z_Command_Record) is
+     (  Command : in Intermediate_Z_Types.Z_Command_Record) is
    begin
       Z_Command_Fifo.Push(Item => Command);
-      end Set_Parameter;
+   end Set_Parameter;
 
 
-     type Dummy_Type is new integer;
+   type Dummy_Type is new integer;
 
    type Node_Boolean_Array_Type is array (Open_Zwave.Value_U8) of boolean;
 
@@ -36,7 +39,7 @@ package body Z_Comms_Task_Pkg is
       procedure Print_Valid_Record ( VR : in Open_Zwave.Value_ID) is
 
       begin
-        Gnoga.log("In detail --->");
+         Gnoga.log("In detail --->");
          Gnoga.log ("VR - Type_ID : " & VR.Type_Id'img);
          Gnoga.log ("VR-Index(U8) : " & VR.Index'img);
          Gnoga.log ("VR-Command_Class_ID(U8) : " & VR.Command_Class_ID'img);
@@ -51,19 +54,19 @@ package body Z_Comms_Task_Pkg is
 
 
 
-         end Print_Valid_Record;
+      end Print_Valid_Record;
 
    begin
       Gnoga.log("M_Type : " & Notification.M_Type'img);
-         Print_Valid_Record(Notification.M_Value_ID);
-        Gnoga.Log("M_Byte :" & Notification.M_Byte'img);
+      Print_Valid_Record(Notification.M_Value_ID);
+      Gnoga.Log("M_Byte :" & Notification.M_Byte'img);
 
-      end Print_Z_Notification;
+   end Print_Z_Notification;
 
 
    procedure Notify_Me (Notification : in     Open_Zwave.Notification_Info;
                         Context      : in out Dummy_Type)
-      is
+   is
 
       type Notification_Type_Rep is mod 2 ** Open_Zwave.Notification_Type_ID'Size;
 
@@ -81,6 +84,7 @@ package body Z_Comms_Task_Pkg is
 
          -- filtering out zero command classes and
          if Notification.M_Value_ID.Command_Class_ID > 0  then
+
             Notification_Queue_PO.Add_Item(Value => Notification);
          end if;
       else
@@ -94,7 +98,41 @@ package body Z_Comms_Task_Pkg is
    end Notify_Me;
 
 
-    package ZManager is new Open_Zwave.Manager
+   procedure Check_Notification
+     (Notification : in     Open_Zwave.Notification_Info;
+      Context      : in out Dummy_Type) is
+
+      type Notification_Type_Rep is mod 2 ** Open_Zwave.Notification_Type_ID'Size;
+
+      function To_Rep is new Ada.Unchecked_Conversion
+        (Source => Open_Zwave.Notification_Type_ID,
+         Target => Notification_Type_Rep);
+
+      Rep : Notification_Type_Rep;
+   begin -- Notify_Me
+      Gnoga.log (Notification.M_Type'img);
+      Rep := To_Rep (Notification.M_Type);
+
+      if Rep in Open_Zwave.Notification_Type_ID'Pos (Open_Zwave.Notification_Type_ID'First) ..
+        Open_Zwave.Notification_Type_ID'Pos (Open_Zwave.Notification_Type_ID'Last) then
+
+         -- filtering out zero command classes and
+         if Notification.M_Value_ID.Command_Class_ID > 0  then
+
+            Notification_Queue_PO.Add_Item(Value => Notification);
+         end if;
+      else
+
+         Gnoga.log ("*****Notification received with invalid type******" &
+                      Rep'Img);
+      end if;
+   exception
+      when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
+
+   end Check_Notification;
+
+
+   package ZManager is new Open_Zwave.Manager
      (Context_Data                 => Dummy_Type,
       Process_Notification         => Notify_Me,
       Initial_Configuration_Path   =>"/home/tony/zwavetry",
@@ -102,30 +140,44 @@ package body Z_Comms_Task_Pkg is
       Initial_Command_Line_Options => "" );
    use ZManager;
 
-   procedure Read_And_Set_Parameter
-     (  ) is
-      Command : in Intermediate_Z_Types.Z_Command_Record;
-      Node :ZManager.Node_ID := ZManager.Node_ID(Command.Node);
-      Index :ZManager.Parameter_Index :=ZManager.Parameter_Index(Command.Index);
-      Value : ZManager.Parameter_Value := ZManager.Parameter_Value(Command.Value);
+   procedure Check_Incoming_Z_Messages
+     ( Home_Id : in Controller_ID ) is
+      Command :  Intermediate_Z_Types.Z_Command_Record;
 
    begin
+      while  not Z_Command_Fifo.Is_Empty  loop
+
+         Z_Command_Fifo.Pop (Command);
+         declare
+            Node :ZManager.Node_ID := ZManager.Node_ID(Command.Node);
+            Index :ZManager.Parameter_Index :=ZManager.Parameter_Index(Command.Index);
+            Value : ZManager.Parameter_Value := ZManager.Parameter_Value(Command.Value);
+
+         begin
+            ZManager.Set_Parameter
+              (Controller => Home_Id,
+               Node => Node,
+               Index => Index,
+               Value => Value,
+               Num_Bytes => Command.Num_Bytes);
+
+         end;
+
+      end loop;
+
+   end Check_Incoming_Z_Messages;
 
 
 
-      end Set_Parameter;
 
-
-
-
- procedure Print_Value_Id (The_Value_Id : in Value_Id ) is
+   procedure Print_Value_Id (The_Value_Id : in Value_Id ) is
 
       Boolean_Value_Id : Boolean;
       Unsigned_Value_Id : Interfaces.Unsigned_8;
       Float_Value_Id : Float;
       Integer_32_Value_Id : Interfaces.Integer_32;
       Integer_16_Value_Id : Interfaces.Integer_16;
-       -- string is encapsulated
+      -- string is encapsulated
    begin
       Gnoga.log("**%%");
       Gnoga.log ("VR - Type_ID : " & The_Value_Id.Type_Id'img);
@@ -194,7 +246,7 @@ package body Z_Comms_Task_Pkg is
             Gnoga.log("RAW not implemented ");
 
          when Invalid =>
-      Gnoga.log("Invalid Type ");
+            Gnoga.log("Invalid Type ");
 
          when others =>
             Gnoga.log("Theres a new type and no one told me! ");
@@ -202,9 +254,9 @@ package body Z_Comms_Task_Pkg is
 
 
       end case;
-     Gnoga.log("%%**");
+      Gnoga.log("%%**");
    exception
-       when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
+      when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
 
    end Print_Value_Id;
 
@@ -248,137 +300,137 @@ package body Z_Comms_Task_Pkg is
 
       end;
 
-         loop
+      loop
 
-            --delay 200.0;
-            --for count in Node_Boolean_Array_Type'first..Node_Boolean_Array_Type'last loop
-            --   if Node_Occupied(count) then
-            --      if not Node_Asked(count) then
-            --         Gnoga.log("&&Getting all parameters for node :" & count'img & "&&");
-            --         ZManager.Get_All_Parameters
-            --           (Controller => Home_ID,
-            --            Node       => ZManager.Node_ID(count));
-            --         Node_Asked(count) := true;
-            --      end if;
-            --   end if;
+         --delay 200.0;
+         --for count in Node_Boolean_Array_Type'first..Node_Boolean_Array_Type'last loop
+         --   if Node_Occupied(count) then
+         --      if not Node_Asked(count) then
+         --         Gnoga.log("&&Getting all parameters for node :" & count'img & "&&");
+         --         ZManager.Get_All_Parameters
+         --           (Controller => Home_ID,
+         --            Node       => ZManager.Node_ID(count));
+         --         Node_Asked(count) := true;
+         --      end if;
+         --   end if;
 
-            --end loop;
+         --end loop;
 
-            While not Notification_Queue_PO.Empty  loop
-               Gnoga.log(" Size of Queue " & Notification_Queue_PO.The_Size'img & " items ");
-               Notification_Queue_PO.Read_Item(Value => Adhoc_Notification);
-               Print_Value_Id(The_Value_Id => Adhoc_Notification.M_Value_ID);
+         While not Notification_Queue_PO.Empty  loop
+            Gnoga.log(" Size of Queue " & Notification_Queue_PO.The_Size'img & " items ");
+            Notification_Queue_PO.Read_Item(Value => Adhoc_Notification);
+            Print_Value_Id(The_Value_Id => Adhoc_Notification.M_Value_ID);
 
-            end loop;
-
-
+         end loop;
 
 
 
-            select
 
-               accept End_The_Task do
-                  Terminate_Task := true;
-               end;
 
-            or
+         select
 
-               accept Set_Debug (Debug : boolean ) do
+            accept End_The_Task do
+               Terminate_Task := true;
+            end;
 
-                  Print_Debug := Debug;
+         or
 
-               end;
+            accept Set_Debug (Debug : boolean ) do
 
-            or
-               delay 10.0;
+               Print_Debug := Debug;
+
+            end;
+
+         or
+            delay 10.0;
 
          or accept Set_Time_Between_Polls (Time_Period : in Duration) do
                Time_Between_Requests := Time_Period;
 
             end Set_Time_Between_Polls;
 
-            end Select;
+         end Select;
 
-            if Terminate_Task then
-               Exit;
-            end if;
-
-
-
-
-
-
-            if Last_Temperature_Request + Time_Between_Requests < Ada.Calendar.Clock then
-               Last_Temperature_Request := Ada.Calendar.Clock;
-               ZManager.Get_All_Parameters(Controller => Adhoc_Notification.M_Value_ID.Home_ID ,
-                                           Node       => Node_ID(Adhoc_Notification.M_Value_ID.Node));
-               --                                       ZManager.Node_ID(count));
-               Node_Asked(Adhoc_Notification.M_Value_ID.Node) := true;
-            end if;
-
-
-
-         end loop;
-      exception
-         when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
-
-
-      end Z_Comms_Task_Type;
-
-      type Z_Comms_Access is access Z_Comms_Task_Type;
-
-      Z_Task : Z_Comms_Access;
-
-
-
-      function Z_Task_Running return boolean is
-      begin
-         if Z_Task = null then
-            return false;
-         else
-            return true;
-         end if;
-      end Z_Task_Running;
-
-
-      procedure Z_Start_The_Task (The_Interface : in string;
-                                  Success : out boolean) is
-
-      begin
-         if Z_Task_Running then
-            Gnoga.log("Task Already Running ");
-         else
-
-            Z_Task := new Z_Comms_Task_Type;
-         end if;
-         delay 5.0;
-         Z_Task.Start(The_Interface);
-         Success := Z_Task_Running;
-
-      end Z_Start_The_Task;
-
-
-
-      procedure Set_Debug ( Debug : in boolean) is
-      begin
-         if Z_Task_Running then
-            Z_Task.Set_Debug(Debug => Debug);
-         else
-            Gnoga.log("Z_TASK not running");
+         if Terminate_Task then
+            Exit;
          end if;
 
-         end Set_Debug;
 
-      procedure Set_Polling_Time_Between_Polls ( Time_Period : in Duration) is
 
-      begin
-          if Z_Task_Running then
-            Z_Task.Set_Time_Between_Polls(Time_Period => Time_Period);
-         else
-            Gnoga.log("Z_TASK not running");
+
+
+
+         if Last_Temperature_Request + Time_Between_Requests < Ada.Calendar.Clock then
+            Last_Temperature_Request := Ada.Calendar.Clock;
+            ZManager.Get_All_Parameters(Controller => Adhoc_Notification.M_Value_ID.Home_ID ,
+                                        Node       => Node_ID(Adhoc_Notification.M_Value_ID.Node));
+            --                                       ZManager.Node_ID(count));
+            Node_Asked(Adhoc_Notification.M_Value_ID.Node) := true;
          end if;
 
-      end Set_Polling_Time_Between_Polls;
 
 
-   end Z_Comms_Task_Pkg;
+      end loop;
+   exception
+      when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
+
+
+   end Z_Comms_Task_Type;
+
+   type Z_Comms_Access is access Z_Comms_Task_Type;
+
+   Z_Task : Z_Comms_Access;
+
+
+
+   function Z_Task_Running return boolean is
+   begin
+      if Z_Task = null then
+         return false;
+      else
+         return true;
+      end if;
+   end Z_Task_Running;
+
+
+   procedure Z_Start_The_Task (The_Interface : in string;
+                               Success : out boolean) is
+
+   begin
+      if Z_Task_Running then
+         Gnoga.log("Task Already Running ");
+      else
+
+         Z_Task := new Z_Comms_Task_Type;
+      end if;
+      delay 5.0;
+      Z_Task.Start(The_Interface);
+      Success := Z_Task_Running;
+
+   end Z_Start_The_Task;
+
+
+
+   procedure Set_Debug ( Debug : in boolean) is
+   begin
+      if Z_Task_Running then
+         Z_Task.Set_Debug(Debug => Debug);
+      else
+         Gnoga.log("Z_TASK not running");
+      end if;
+
+   end Set_Debug;
+
+   procedure Set_Polling_Time_Between_Polls ( Time_Period : in Duration) is
+
+   begin
+      if Z_Task_Running then
+         Z_Task.Set_Time_Between_Polls(Time_Period => Time_Period);
+      else
+         Gnoga.log("Z_TASK not running");
+      end if;
+
+   end Set_Polling_Time_Between_Polls;
+
+
+end Z_Comms_Task_Pkg;

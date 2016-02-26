@@ -1,5 +1,5 @@
 with Interfaces;
-with  Fifo_Po;
+--with  Fifo_Po;
 package Intermediate_Z_Types is
  type Node_ID         is mod 2 ** 8;
       type Parameter_Index is mod 2 ** 8;
@@ -13,8 +13,6 @@ package Intermediate_Z_Types is
       Num_Bytes  :  Natural := 2;
     end Record;
 
-   Package Z_Command_Fifo_Pkg is new
-     Fifo_Po(Element_Type => Z_Command_Record);
 
 
 

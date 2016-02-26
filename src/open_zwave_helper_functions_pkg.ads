@@ -7,6 +7,7 @@ with Ada.Calendar;
 --with Gnat.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client;
 with Tables;
 with Ada.Strings.Unbounded;
+with Interfaces;
 package Open_Zwave_Helper_Functions_Pkg is
 
    package SU renames Ada.Strings.Unbounded;
@@ -70,10 +71,17 @@ package Open_Zwave_Helper_Functions_Pkg is
 
 
 
-   type Z_Store_Type is record
+
+   type Z_Store_Type  is record
       Class : Value_U8;
-      String_Value : SU.Unbounded_String;
-      Number_Value : Integer;
+      The_Type : Value_Type_ID;
+        Boolean_Value : Boolean;
+      Byte_Value : Interfaces.Unsigned_8;
+      Float_Value : Float;
+      Int_32_Value : Interfaces.Integer_32;
+      Int_16_Value : Interfaces.Integer_16;
+      String_Value : Su.Unbounded_String;
+
    end record;
 
    Blank_Z_Store : constant Z_Store_Type :=
@@ -96,6 +104,7 @@ package Open_Zwave_Helper_Functions_Pkg is
 
 
    protected type Command_Class_Values_Type is
+      function Node_Initialised return boolean;
       procedure Initialise_Node ( Node_Value : Value_U8);
       function Get_Node_ID return Value_U8;
       procedure Add_Class_Value ( Class_Value : in Z_Store_Type);
@@ -113,8 +122,22 @@ package Open_Zwave_Helper_Functions_Pkg is
 
    This_Network : Z_Network_Values_Type;
 
+
+   package Node_Table_Pkg is new Tables(Tag => Value_U8);
+
+   type Value_U8_Array_Type is Array(Natural range <>) of Value_U8;
+
+   Blank_Value_U8_Array : Value_U8_Array_Type(1..0) := (others => 0);
+
+
    protected The_Nodes is
-      procedure Submit_Node (Node_Value :: Value_U8);
-      procedure Get_Active_Node_List
+      procedure Submit_Node (Node_Value : in Value_U8);
+      function Get_Active_Node_List return Value_U8_Array_Type;
+      function Number_Nodes return Natural;
+   private
+      Node_Table : Node_Table_Pkg.Table;
+   end The_Nodes;
+
+   procedure Process_Z_Notification_Into_Data (Chunk : in Open_Zwave.Notification_Info);
 
 end Open_Zwave_Helper_Functions_Pkg;
