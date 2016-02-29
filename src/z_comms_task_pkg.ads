@@ -1,5 +1,6 @@
 with Open_Zwave; use Open_Zwave;
 with Intermediate_Z_Types;
+with Open_Zwave_Helper_Functions_Pkg; use Open_Zwave_Helper_Functions_Pkg;
 package Z_Comms_Task_Pkg is
 
 
@@ -16,6 +17,18 @@ package Z_Comms_Task_Pkg is
    procedure Set_Parameter
      (  Command : in Intermediate_Z_Types.Z_Command_Record);
 
+generic
+      with Procedure Action_On_Node_Value (Node_Number : Value_U8);
+   procedure Action_On_Node_List(Nodes : in Value_U8_Array_Type);
 
+
+
+   package ZManager is new Open_Zwave.Manager
+     (Context_Data                 => Dummy_Type,
+      Process_Notification         =>  Process_Z_Notification_Into_Data,
+      Initial_Configuration_Path   =>"/home/tony/zwavetry",
+      Initial_User_Path            =>"",
+      Initial_Command_Line_Options => "" );
+   use ZManager;
 
 end  Z_Comms_Task_Pkg;

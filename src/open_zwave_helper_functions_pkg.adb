@@ -150,9 +150,9 @@ package body Open_Zwave_Helper_Functions_Pkg is
    protected body  Command_Class_Values_Type is
 
 
-      function Class_Location(Node : in Value_U8) return Natural is
+      function Class_Location(Class : in Value_U8) return Natural is
       begin
-         return List_Table.Locate(Name => Node'img);
+         return List_Table.Locate(Name => Class'img);
       end Class_Location;
 
       function Node_Initialised return boolean is
@@ -183,14 +183,14 @@ package body Open_Zwave_Helper_Functions_Pkg is
 
 
       procedure Add_Class_Value ( Class_Value : in Z_Store_Type) is
-         Class_Place : Natural :=Class_Location(Class_Value.Class);
+         Class_Place : Natural :=Class_Location(Class_Value.The_Value_Id.Command_Class_ID);
       begin
          if not Initialised then
             raise Node_Not_Initialised;
          end if;
 
          if Class_Place = 0 then
-            List_Table.Add(Name => Class_Value.Class'img,
+            List_Table.Add(Name => Class_Value.The_Value_Id.Command_Class_ID'img,
                            Data => Class_Value);
          else
             List_Table.Replace(Offset => Class_Place,
@@ -223,7 +223,7 @@ package body Open_Zwave_Helper_Functions_Pkg is
          else
 
                for count in 1..Array_Size loop
-                  Class_List(count) := List_Table.GetTag(count).Class;
+                  Class_List(count) := List_Table.GetTag(count).The_Value_Id.Command_Class_ID;
                end loop;
                return Class_List;
 
@@ -284,8 +284,13 @@ package body Open_Zwave_Helper_Functions_Pkg is
 
    end The_Nodes;
 
-   procedure Process_Z_Notification_Into_Data (Chunk : in Open_Zwave.Notification_Info) is
+   procedure Process_Z_Notification_Into_Data
+     (Chunk : in Open_Zwave.Notification_Info;
+      Context      : in out Dummy_Type) is
 
+       Store_Value : Z_Store_Type :=
+           (The_Value_Id => Chunk.M_Value_ID,
+            Occurred_At => Ada.Calendar.Clock);
    begin
       -- check the coordinator ID
       -- add it if its not there
@@ -298,7 +303,11 @@ package body Open_Zwave_Helper_Functions_Pkg is
       if not This_Network(Chunk.M_Value_ID.Node).Node_Initialised then
          This_Network(Chunk.M_Value_ID.Node).Initialise_Node(Chunk.M_Value_ID.Node);
       end if;
-      This_Network(Chunk.M_Value_ID.Node).
+
+      This_Network(Chunk.M_Value_ID.Node).Add_Class_Value(Class_Value => Store_Value);
+
+   end Process_Z_Notification_Into_Data;
+
 
 
 

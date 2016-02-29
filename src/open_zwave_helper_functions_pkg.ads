@@ -70,24 +70,29 @@ package Open_Zwave_Helper_Functions_Pkg is
    end Home_Id_P;
 
 
-
-
-   type Z_Store_Type  is record
-      Class : Value_U8;
-      The_Type : Value_Type_ID;
-        Boolean_Value : Boolean;
-      Byte_Value : Interfaces.Unsigned_8;
-      Float_Value : Float;
-      Int_32_Value : Interfaces.Integer_32;
-      Int_16_Value : Interfaces.Integer_16;
-      String_Value : Su.Unbounded_String;
-
+   Type Z_Store_Type is record
+      Occurred_At : Ada.Calendar.Time;
+      The_Value_Id : Value_Id;
    end record;
 
+   Blank_Adatime : constant Ada.Calendar.Time :=
+     Ada.calendar.Time_Of
+     (Year => 1969,
+      Month => 12,
+      Day => 14);
+
+
    Blank_Z_Store : constant Z_Store_Type :=
-     (Class => 0,
-      String_Value => Su.To_Unbounded_String(""),
-      Number_Value =>  0);
+     (Occurred_At => Blank_Adatime,
+      The_Value_ID =>
+        (Type_ID => Invalid,
+         Index => 0,
+         Command_Class_ID =>  0,
+         Genre => Invalid,
+         Node => 0,
+         Command_Class_Index => 0,
+         Home_Id => 0
+        ) );
 
    type Class_List_Array_Type is array (positive range <>) of Open_Zwave.Value_U8;
 
@@ -138,6 +143,10 @@ package Open_Zwave_Helper_Functions_Pkg is
       Node_Table : Node_Table_Pkg.Table;
    end The_Nodes;
 
-   procedure Process_Z_Notification_Into_Data (Chunk : in Open_Zwave.Notification_Info);
+    type Dummy_Type is new integer;
+
+
+   procedure Process_Z_Notification_Into_Data (Chunk : in Open_Zwave.Notification_Info;
+                        Context      : in out Dummy_Type);
 
 end Open_Zwave_Helper_Functions_Pkg;

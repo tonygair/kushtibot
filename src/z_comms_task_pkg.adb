@@ -21,7 +21,6 @@ package body Z_Comms_Task_Pkg is
    end Set_Parameter;
 
 
-   type Dummy_Type is new integer;
 
    type Node_Boolean_Array_Type is array (Open_Zwave.Value_U8) of boolean;
 
@@ -132,13 +131,6 @@ package body Z_Comms_Task_Pkg is
    end Check_Notification;
 
 
-   package ZManager is new Open_Zwave.Manager
-     (Context_Data                 => Dummy_Type,
-      Process_Notification         => Notify_Me,
-      Initial_Configuration_Path   =>"/home/tony/zwavetry",
-      Initial_User_Path            =>"",
-      Initial_Command_Line_Options => "" );
-   use ZManager;
 
    procedure Check_Incoming_Z_Messages
      ( Home_Id : in Controller_ID ) is
@@ -273,6 +265,25 @@ package body Z_Comms_Task_Pkg is
 
    end Z_Comms_Task_Type;
 
+   Procedure Print_Node_List (Nodes : in Value_U8_Array_Type) is
+      Start_List : Natural := Nodes'first;
+      End_List : Natural := Nodes'last;
+   begin
+      Gnoga.log("Node List " );
+      for count in Start_List..End_List loop
+         gnoga.log(Nodes(count)'img);
+      end loop;
+   end Print_Node_List;
+
+
+    procedure Action_On_Node_List(Nodes : in Value_U8_Array_Type)    is
+      Start_List : Natural := Nodes'first;
+      End_List : Natural := Nodes'last;
+   begin
+      for count in Start_List..End_List loop
+         Action_On_Node_Value(Nodes(count));
+      end loop;
+   end Action_On_Node_List;
 
 
 
@@ -315,6 +326,7 @@ package body Z_Comms_Task_Pkg is
          --   end if;
 
          --end loop;
+         Gnoga.log(" Size of Queue " & Notification_Queue_PO.The_Size'img & " items ");
 
          While not Notification_Queue_PO.Empty  loop
             Gnoga.log(" Size of Queue " & Notification_Queue_PO.The_Size'img & " items ");
@@ -362,10 +374,19 @@ package body Z_Comms_Task_Pkg is
 
          if Last_Temperature_Request + Time_Between_Requests < Ada.Calendar.Clock then
             Last_Temperature_Request := Ada.Calendar.Clock;
+            --examine the nodes
+            declare
+               Node_List : Open_Zwave_Helper_Functions_Pkg.Value_U8_Array_Type :=
+                 Open_Zwave_Helper_Functions_Pkg.The_Nodes.Get_Active_Node_List;
+            begin
+               Print_Node_List(Nodes => Node_List);
+
             ZManager.Get_All_Parameters(Controller => Adhoc_Notification.M_Value_ID.Home_ID ,
                                         Node       => Node_ID(Adhoc_Notification.M_Value_ID.Node));
             --                                       ZManager.Node_ID(count));
-            Node_Asked(Adhoc_Notification.M_Value_ID.Node) := true;
+               Node_Asked(Adhoc_Notification.M_Value_ID.Node) := true;
+            end;
+
          end if;
 
 
