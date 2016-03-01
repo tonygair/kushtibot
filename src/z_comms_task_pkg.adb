@@ -278,7 +278,7 @@ package body Z_Comms_Task_Pkg is
    end Print_Node_List;
 
 
-    procedure Action_On_Node_List(Nodes : in Value_U8_Array_Type)    is
+   procedure Action_On_Node_List(Nodes : in Value_U8_Array_Type)    is
       Start_List : Natural := Nodes'first;
       End_List : Natural := Nodes'last;
    begin
@@ -289,11 +289,11 @@ package body Z_Comms_Task_Pkg is
 
    procedure Print_Node_Details ( Node : Value_U8) is
       Classes : Z_Store_Array_Type := This_Network(Node).Get_List_Class_Values;
-       Start_List : Natural := Classes'first;
+      Start_List : Natural := Classes'first;
       End_List : Natural := Classes'last;
       The_Value_ID : Value_ID;
 
-         Boolean_Value_Id : Boolean;
+      Boolean_Value_Id : Boolean;
       Unsigned_Value_Id : Interfaces.Unsigned_8;
       Float_Value_Id : Float;
       Integer_32_Value_Id : Interfaces.Integer_32;
@@ -305,66 +305,66 @@ package body Z_Comms_Task_Pkg is
                    (Date                  => Classes(count).Occurred_At));
          The_Value_ID := Classes(count).The_Value_Id;
          case The_Value_Id.Type_ID is
-               when Bool =>
-            Boolean_Value_Id := ZManager.Value(The_Value_Id);
+            when Bool =>
+               Boolean_Value_Id := ZManager.Value(The_Value_Id);
 
-            Gnoga.log("Boolean Value Id : " & Boolean_Value_Id'img);
-
-
-
-         when Byte =>
-            Unsigned_Value_Id := ZManager.Value(The_Value_Id);
-            Gnoga.log ("Unsigned Value Id : " & Unsigned_Value_Id'img);
-
-         when Decimal =>
-            Float_Value_Id := ZManager.Value(The_Value_Id);
-            Gnoga.log("Float Value Id : " &  Float_Value_Id'img);
-
-
-         when Int =>
-            Integer_32_Value_Id := ZManager.Value(The_Value_Id);
-            Gnoga.log("Integer 32 Value_Id : " & Integer_32_Value_Id'img);
-
-         when List =>
-            Gnoga.log("list not implemented ");
-
-
-         when Schedule =>
-            Gnoga.log("Schedule not implemented ");
-
-         when  Short =>
-            Integer_16_Value_Id := ZManager.Value(The_Value_Id);
-            Gnoga.log(" Integer 16 Value Id : " & Integer_16_Value_Id 'img);
-
-
-         when String_Type =>
-            declare
-               String_Value_Id :constant string :=ZManager.Value(The_Value_Id) ;
-
-            begin
-
-               Gnoga.log(" String Value ID : " & String_Value_Id);
-            exception
-               when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
-
-            end;
-
-         when Button =>
-            Gnoga.log("Button not implemented ");
-
-
-         when Raw =>
-            Gnoga.log("RAW not implemented ");
-
-         when Invalid =>
-            Gnoga.log("Invalid Type ");
-
-         when others =>
-            Gnoga.log("Theres a new type and no one told me! ");
+               Gnoga.log("Boolean Value Id : " & Boolean_Value_Id'img);
 
 
 
-      end case;
+            when Byte =>
+               Unsigned_Value_Id := ZManager.Value(The_Value_Id);
+               Gnoga.log ("Unsigned Value Id : " & Unsigned_Value_Id'img);
+
+            when Decimal =>
+               Float_Value_Id := ZManager.Value(The_Value_Id);
+               Gnoga.log("Float Value Id : " &  Float_Value_Id'img);
+
+
+            when Int =>
+               Integer_32_Value_Id := ZManager.Value(The_Value_Id);
+               Gnoga.log("Integer 32 Value_Id : " & Integer_32_Value_Id'img);
+
+            when List =>
+               Gnoga.log("list not implemented ");
+
+
+            when Schedule =>
+               Gnoga.log("Schedule not implemented ");
+
+            when  Short =>
+               Integer_16_Value_Id := ZManager.Value(The_Value_Id);
+               Gnoga.log(" Integer 16 Value Id : " & Integer_16_Value_Id 'img);
+
+
+            when String_Type =>
+               declare
+                  String_Value_Id :constant string :=ZManager.Value(The_Value_Id) ;
+
+               begin
+
+                  Gnoga.log(" String Value ID : " & String_Value_Id);
+               exception
+                  when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
+
+               end;
+
+            when Button =>
+               Gnoga.log("Button not implemented ");
+
+
+            when Raw =>
+               Gnoga.log("RAW not implemented ");
+
+            when Invalid =>
+               Gnoga.log("Invalid Type ");
+
+            when others =>
+               Gnoga.log("Theres a new type and no one told me! ");
+
+
+
+         end case;
 
       end loop;
 
@@ -406,20 +406,6 @@ package body Z_Comms_Task_Pkg is
       end;
 
       loop
-
-         --delay 200.0;
-         --for count in Node_Boolean_Array_Type'first..Node_Boolean_Array_Type'last loop
-         --   if Node_Occupied(count) then
-         --      if not Node_Asked(count) then
-         --         Gnoga.log("&&Getting all parameters for node :" & count'img & "&&");
-         --         ZManager.Get_All_Parameters
-         --           (Controller => Home_ID,
-         --            Node       => ZManager.Node_ID(count));
-         --         Node_Asked(count) := true;
-         --      end if;
-         --   end if;
-
-         --end loop;
          Gnoga.log(" Size of Queue " & Notification_Queue_PO.The_Size'img & " items ");
 
          While not Notification_Queue_PO.Empty  loop
@@ -463,27 +449,27 @@ package body Z_Comms_Task_Pkg is
 
 
 
-
-
-
-         if Last_Temperature_Request + Time_Between_Requests < Ada.Calendar.Clock then
-            Last_Temperature_Request := Ada.Calendar.Clock;
+         -- check to see if enough time has past so we can do another request for notifications etc!
+         Gnoga.log("Last Req :" & Ada.Calendar.Formatting.Image(Last_Temperature_Request) & " TBR " &
+                        Time_Between_Requests'img & " Now is " &
+                        Ada.Calendar.Formatting.Image(Ada.Calendar.Clock));
+         if (Last_Temperature_Request + Time_Between_Requests) < Ada.Calendar.Clock then
             --examine the nodes
+            Gnoga.Log("Time to send out messages for updates " );
+
+            Last_Temperature_Request := Ada.Calendar.Clock;
 
             declare
                Node_List : Open_Zwave_Helper_Functions_Pkg.Value_U8_Array_Type :=
                  Open_Zwave_Helper_Functions_Pkg.The_Nodes.Get_Active_Node_List;
             begin
-            --   Print_Node_List(Nodes => Node_List);
-            Print_Node_List_Details(Node_List);
-            Get_All_Parameters_For_Node_List(Node_List);
-            --                                       ZManager.Node_ID(count));
+               --   Print_Node_List(Nodes => Node_List);
+               Print_Node_List_Details(Node_List);
+               Get_All_Parameters_For_Node_List(Node_List);
 
             end;
 
          end if;
-
-
 
       end loop;
    exception
