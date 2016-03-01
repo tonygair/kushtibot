@@ -306,6 +306,10 @@ package body Z_Comms_Task_Pkg is
       end loop;
 
       for count in Start_List..End_List loop
+         If count = 0 or count = 32 then
+            null;
+         else
+
          Gnoga.log("Last Class Update for class : " & Ada.Calendar.Formatting.Image
                    (Date                  => Classes(count).Occurred_At));
          The_Value_ID := Classes(count).The_Value_Id;
@@ -370,6 +374,7 @@ package body Z_Comms_Task_Pkg is
 
 
          end case;
+         end if;
 
       end loop;
 
