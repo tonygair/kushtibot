@@ -306,7 +306,8 @@ package body Z_Comms_Task_Pkg is
       end loop;
 
       for count in Start_List..End_List loop
-         If count = 0 or count = 32 then
+         If Classes(count).The_Value_Id.Command_Class_ID = 0 or
+           Classes(count).The_Value_Id.Command_Class_ID = 32 then
             null;
          else
 
