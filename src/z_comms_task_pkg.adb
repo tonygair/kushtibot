@@ -300,6 +300,11 @@ package body Z_Comms_Task_Pkg is
       Integer_16_Value_Id : Interfaces.Integer_16;
    begin
       Gnoga.log (" Node : " & Node'img);
+       for count in Start_List..End_List loop
+         Gnoga.log("Class " & Classes(count).The_Value_Id.Command_Class_ID'img
+                   & "Type " & Classes(count).The_Value_Id.Type_ID'img);
+      end loop;
+
       for count in Start_List..End_List loop
          Gnoga.log("Last Class Update for class : " & Ada.Calendar.Formatting.Image
                    (Date                  => Classes(count).Occurred_At));
