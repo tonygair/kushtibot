@@ -5,8 +5,10 @@ with Ada.Unchecked_Conversion;
 with Interfaces;
 with Gnoga;
 with Ada.Calendar; use Ada.Calendar;
+with Ada.Calendar.Formatting;
 with Intermediate_Z_Types;
 with Fifo_Po;
+with Ada.Calendar.Formatting;
 package body Z_Comms_Task_Pkg is
 
    Package Z_Command_Fifo_Pkg is new
@@ -285,9 +287,101 @@ package body Z_Comms_Task_Pkg is
       end loop;
    end Action_On_Node_List;
 
+   procedure Print_Node_Details ( Node : Value_U8) is
+      Classes : Z_Store_Array_Type := This_Network(Node).Get_List_Class_Values;
+       Start_List : Natural := Classes'first;
+      End_List : Natural := Classes'last;
+      The_Value_ID : Value_ID;
+
+         Boolean_Value_Id : Boolean;
+      Unsigned_Value_Id : Interfaces.Unsigned_8;
+      Float_Value_Id : Float;
+      Integer_32_Value_Id : Interfaces.Integer_32;
+      Integer_16_Value_Id : Interfaces.Integer_16;
+   begin
+      Gnoga.log (" Node : " & Node'img);
+      for count in Start_List..End_List loop
+         Gnoga.log("Last Class Update for class : " & Ada.Calendar.Formatting.Image
+                   (Date                  => Classes(count).Occurred_At));
+         The_Value_ID := Classes(count).The_Value_Id;
+         case The_Value_Id.Type_ID is
+               when Bool =>
+            Boolean_Value_Id := ZManager.Value(The_Value_Id);
+
+            Gnoga.log("Boolean Value Id : " & Boolean_Value_Id'img);
 
 
 
+         when Byte =>
+            Unsigned_Value_Id := ZManager.Value(The_Value_Id);
+            Gnoga.log ("Unsigned Value Id : " & Unsigned_Value_Id'img);
+
+         when Decimal =>
+            Float_Value_Id := ZManager.Value(The_Value_Id);
+            Gnoga.log("Float Value Id : " &  Float_Value_Id'img);
+
+
+         when Int =>
+            Integer_32_Value_Id := ZManager.Value(The_Value_Id);
+            Gnoga.log("Integer 32 Value_Id : " & Integer_32_Value_Id'img);
+
+         when List =>
+            Gnoga.log("list not implemented ");
+
+
+         when Schedule =>
+            Gnoga.log("Schedule not implemented ");
+
+         when  Short =>
+            Integer_16_Value_Id := ZManager.Value(The_Value_Id);
+            Gnoga.log(" Integer 16 Value Id : " & Integer_16_Value_Id 'img);
+
+
+         when String_Type =>
+            declare
+               String_Value_Id :constant string :=ZManager.Value(The_Value_Id) ;
+
+            begin
+
+               Gnoga.log(" String Value ID : " & String_Value_Id);
+            exception
+               when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
+
+            end;
+
+         when Button =>
+            Gnoga.log("Button not implemented ");
+
+
+         when Raw =>
+            Gnoga.log("RAW not implemented ");
+
+         when Invalid =>
+            Gnoga.log("Invalid Type ");
+
+         when others =>
+            Gnoga.log("Theres a new type and no one told me! ");
+
+
+
+      end case;
+
+      end loop;
+
+   end Print_Node_Details;
+
+   procedure Print_Node_List_Details is new Action_On_Node_List
+     (Action_On_Node_Value => Print_Node_Details);
+
+   procedure Get_All_Parameters_For_Node (The_Node : in Value_U8) is
+
+   begin
+      ZManager.Get_All_Parameters(Controller => Home_Id_P.Read_Home_Id ,
+                                  Node       => ZManager.Node_Id(The_Node));
+   end Get_All_Parameters_For_Node;
+
+   procedure Get_All_Parameters_For_Node_List is new Action_On_Node_List
+     (Action_On_Node_Value => Get_All_Parameters_For_Node);
 
    task body Z_Comms_Task_Type is
 
@@ -375,16 +469,16 @@ package body Z_Comms_Task_Pkg is
          if Last_Temperature_Request + Time_Between_Requests < Ada.Calendar.Clock then
             Last_Temperature_Request := Ada.Calendar.Clock;
             --examine the nodes
+
             declare
                Node_List : Open_Zwave_Helper_Functions_Pkg.Value_U8_Array_Type :=
                  Open_Zwave_Helper_Functions_Pkg.The_Nodes.Get_Active_Node_List;
             begin
-               Print_Node_List(Nodes => Node_List);
-
-            ZManager.Get_All_Parameters(Controller => Adhoc_Notification.M_Value_ID.Home_ID ,
-                                        Node       => Node_ID(Adhoc_Notification.M_Value_ID.Node));
+            --   Print_Node_List(Nodes => Node_List);
+            Print_Node_List_Details(Node_List);
+            Get_All_Parameters_For_Node_List(Node_List);
             --                                       ZManager.Node_ID(count));
-               Node_Asked(Adhoc_Notification.M_Value_ID.Node) := true;
+
             end;
 
          end if;
