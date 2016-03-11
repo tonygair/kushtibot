@@ -1,0 +1,14 @@
+project pcs_project1 extends all "polyorb" is
+   for Externally_Built use "true";
+   for Source_Dirs use ("/home/tony/ada/gnat/include/polyorb");
+   for Source_Files use
+     ("polyorb-partition_elaboration.adb",
+      "polyorb-dsa_p-storages-config.adb",
+      "polyorb-dsa_p-partitions.ads",
+      "polyorb-dsa_p-partitions.adb");
+   for Locally_Removed_Files use
+     ("polyorb-partition_elaboration.adb",
+      "polyorb-dsa_p-storages-config.adb",
+      "polyorb-dsa_p-partitions.ads",
+      "polyorb-dsa_p-partitions.adb");
+end pcs_project1;

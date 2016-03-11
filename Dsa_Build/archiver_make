@@ -1,0 +1,4 @@
+KUSHTIBOT_SOURCE_PATH=/home/tony/opensource/kushtibot/src/; export KUSHTIBOT_SOURCE_PATH
+
+
+po_gnatdist    -aI$KUSHTIBOT_SOURCE_PATH'dsaserver' -aI$KUSHTIBOT_SOURCE_PATH'remote_types' -Iodbc -aI$KUSHTIBOT_SOURCE_PATH'common' -lodbc -aI$KUSHTIBOT_SOURCE_PATH'dsaarchiver' -aI$KUSHTIBOT_SOURCE_PATH'dsaclient' -aI$KUSHTIBOT_SOURCE_PATH'common'  -aI/home/tony/opensource/gnoga/deps/simple_components -aI/home/tony/opensource/gnoga/deps/simple_components/odbc/unixodbc/ -aI/home/tony/opensource/gnoga/deps/simple_components/odbc/unixodbc/armhf/ -aI/home/tony/opensource/gnoga/deps/simple_components/atomic-access/gcc/ -aI/home/tony/opensource/gnoga/src /home/tony/opensource/kushtibot/src/config/usna_app.cfg  archiver_partition -cargs -fstack-check  -gnat2012 -Atomic_Access=GCC-built-ins -bargs -E -largs -g -lodbc

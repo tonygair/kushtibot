@@ -1,0 +1,15 @@
+with "pcs_project";
+project usna_app_dist_app is
+   for Object_Dir use "obj";
+   for Source_Dirs use (".",
+     "../.."
+,
+     "/home/tony/opensource/kushtibot/src/dsaserver",
+     "/home/tony/opensource/kushtibot/src/dsaclient",
+     "/home/tony/opensource/kushtibot/src/remote_types",
+     "/home/tony/opensource/kushtibot/src/dsaui",
+     "/home/tony/opensource/kushtibot/src/common",
+     "/home/tony/opensource/gnoga/deps/simple_components",
+     "/home/tony/opensource/gnoga/deps/simple_components/atomic-access/gcc",
+     "/home/tony/opensource/gnoga/src");
+end usna_app_dist_app;

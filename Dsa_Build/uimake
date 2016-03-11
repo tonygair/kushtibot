@@ -1,0 +1,4 @@
+KUSHTIBOT_SOURCE_PATH=/home/tony/opensource/kushtibot/src/; export KUSHTIBOT_SOURCE_PATH
+
+
+po_gnatdist -fstack-check -j5 -gnat2012 -aI$KUSHTIBOT_SOURCE_PATH'dsaserver' -aI$KUSHTIBOT_SOURCE_PATH'dsaclient' -aI$KUSHTIBOT_SOURCE_PATH'remote_types' -aI$KUSHTIBOT_SOURCE_PATH'dsaui' -aI$KUSHTIBOT_SOURCE_PATH'common'  -aI/home/tony/opensource/gnoga/deps/simple_components -aI/home/tony/opensource/gnoga/deps/simple_components/atomic-access/gcc/ -aI/home/tony/opensource/gnoga/src /home/tony/opensource/kushtibot/src/config/usna_app.cfg ui_partition -cargs -Atomic_Access="GCC-built-ins" -bargs -E -largs -g
