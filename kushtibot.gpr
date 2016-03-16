@@ -1,5 +1,8 @@
 with "../gnoga/src/gnoga.gpr";
 with "../ada_open_zwave/ada_open_zwave.gpr";
+with "../gnoga/deps/simple_components/components.gpr";
+with "../gnoga/deps/simple_components/components-odbc.gpr";
+with "../gnoga/deps/simple_components/components-connections_server-elv_max_cube.gpr";
 
 project Kushtibot is
 
@@ -26,6 +29,12 @@ project Kushtibot is
    type Build_Type is
       ("Debug", "Release");
    Prj_Build : Build_Type := external ("PRJ_BUILD");
+   type Arch_Type is
+      ("x86_64", "i686");
+   Arch : Arch_Type := external ("arch");
+   type Odbc_Driver_Type is
+      ("ODBC32", "unixODBC");
+   Odbc : Odbc_Driver_Type := external ("odbc");
 
    case Development is
 
@@ -82,8 +91,26 @@ project Kushtibot is
                                        case Prj_Build is
 
                                           when "Debug" =>
-                                             for Main use ("archiver.adb", "kushtibot_main.adb", "pi_dsa_client.adb", "usna_main.adb");
-                                             for Source_Dirs use (".", "src/**");
+
+                                             case Arch is
+
+                                                when "x86_64" =>
+                                                   for Main use ("archiver.adb", "kushtibot_main.adb", "pi_dsa_client.adb", "usna_main.adb");
+                                                   for Source_Dirs use (".", "src/**");
+
+                                                when "i686" =>
+
+                                                   case Odbc is
+
+                                                      when "ODBC32" =>
+                                                         for Main use ("archiver.adb", "pi_dsa_client.adb", "usna_main.adb");
+                                                         for Source_Dirs use (".", "src/**");
+
+                                                      when "unixODBC" =>
+                                                         for Main use ("archiver.adb", "kushtibot-main.adb", "pi_dsa_client.adb", "usna_main.adb");
+                                                         for Source_Dirs use (".", "src/**");
+                                                   end case;
+                                             end case;
 
                                           when "Release" =>
                                              for Main use ("kushtibot_main.adb");

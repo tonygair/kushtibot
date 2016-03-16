@@ -11,6 +11,7 @@ with UI_Related_Access_Types_Pkg; use UI_Related_Access_Types_Pkg;
 --remote type
 with Alarm;
 with Fifo;
+with Location_Fifo_Po;
 package body Dsa_Usna_Server is
 
 
@@ -894,6 +895,31 @@ package body Dsa_Usna_Server is
                return 0;
          end Get_Max_Location;
 
+         package Debug_By_Location_Pkg is new Location_Fifo_Po(Element_Type => String);
+
+         Debug_Po : Debug_By_Location_Pkg.The_Po;
+
+         procedure Send_Debug_Message
+           (Location : in Location_Id_Type;
+                     Debug_Message : in string) is
+         begin
+            Debug_Po.Push(Location => Location,
+                          Item => Debug_Message);
+         end Send_Debug_Message;
+
+         procedure Get_Next_Debug_Message
+           (Location : out Location_Id_Type;
+            Debug_Message : out string) is
+         begin
+            Debug_Po.Pop
+              (Location => Location,
+               Item => Debug_Message);
+         end Get_Next_Debug_Message;
+
+         function Messages_Waiting return boolean is
+         begin
+            return not Debug_Po.Is_Empty;
+         end Messages_Waiting;
 
 
       end  Dsa_Usna_Server;

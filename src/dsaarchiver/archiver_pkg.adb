@@ -17,7 +17,7 @@ with Message; use Message;
 with Terminal; use Terminal;
 with Alert_Buffer; use Alert_Buffer;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
-
+with Server_SQL_Name_And_Password_Pkg;
 
 package body Archiver_Pkg is
 
@@ -241,8 +241,8 @@ package body Archiver_Pkg is
       Connect
         (Connection  => Database_Connection,
          Server_Name => Server_Name,
-         User_Name   => "root",
-         Password    => "wombatsrus",
+         User_Name   => Server_SQL_Name_And_Password_Pkg.SQL_User,
+         Password    => Server_SQL_Name_And_Password_Pkg.SQL_Password,
          Auto_Commit => true);
       -- Connect to AND load up data from database which is necessary
       -- i.e. user / password data

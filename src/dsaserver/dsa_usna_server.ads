@@ -25,7 +25,7 @@ package Dsa_Usna_Server is
    
    procedure Deregister_Archiver;
    
-   
+     
    
 
     procedure Set_Database_To_Ready;
@@ -110,9 +110,16 @@ package Dsa_Usna_Server is
    function Get_Cube_Serial
      (Location_Id : in Location_Id_Type) return Serial_Type;
    
-   procedure Send_Debug
+   procedure Send_Debug_Message
      ( Location : in Location_Id_Type;
-      Debug : in string);
+      Debug_Message : in string);
+   
+     procedure Get_Next_Debug_Message 
+           (Location : out Location_Id_Type;
+            Debug_Message : out string) ;
+   
+   function Messages_Waiting return boolean;
+   
    
 --     function Get_Modified_Device 
 --       (Serial_Number : in Serial_Type;

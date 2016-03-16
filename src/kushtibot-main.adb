@@ -7,6 +7,7 @@ with kushtibot.Controller;
 with Z_Comms_Task_Pkg;
 
 procedure kushtibot.Main is
+   Startup_Success : boolean;
 begin
     Z_Comms_Task_Pkg.Z_Start_The_Task
      (The_Interface => "/dev/ttyUSB0",

@@ -406,7 +406,7 @@ package body Z_Comms_Task_Pkg is
 
 
    begin
-      Gnoga_Utility_Pkg.Log_Zwave;
+      --Gnoga_Utility_Pkg.Log_Zwave;
       accept Start (The_Interface : in string ) do
 
          --ZManager.Add_Driver(Controller_Path => "/dev/ttyUSB0");
