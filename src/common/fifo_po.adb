@@ -26,7 +26,6 @@ package body Fifo_Po is
       end Is_Empty;
 
 
-
   -- private
   --    The_List : Element_Fifo.Fifo_Type;
    end The_PO;

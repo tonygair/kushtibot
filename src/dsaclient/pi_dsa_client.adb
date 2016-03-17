@@ -12,8 +12,7 @@ with GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client;
 with Pi_Specific_Data_Pkg; use Pi_Specific_Data_Pkg;
 with Ada;
 with Ada.Exceptions;
-with Gnoga;
--- DSA Specific
+
 with Dsa_Usna_Server;
 
 procedure Pi_Dsa_Client is
@@ -29,13 +28,13 @@ procedure Pi_Dsa_Client is
    Pi_Access : Pi_Cube_Client_Pkg.Pi_Access_Type;
 
 begin
-   Gnoga.log("starting Pi App");
+  -- Gnoga.log("starting Pi App");
    -- Find the cube
    if Number_Of_Cubes = 1 then
       Cube_Serial_Number := Serial_Type(Cubes(1).Serial_No);
       Cube_Address := Cubes(1).Address;
-      Gnoga.log("Cube " & string (Cube_Serial_Number) &
-                  " found at address " & Gnat.Sockets.image(Cube_Address));
+--        Gnoga.log("Cube " & string (Cube_Serial_Number) &
+--                    " found at address " & Gnat.Sockets.image(Cube_Address));
       -- first register with the server!
 
       delay 0.5;
@@ -44,7 +43,7 @@ begin
            (Serial_Number =>  Cube_Serial_Number);
          Pi_Data.Set_Location_Id(Location_Id);
 
-   Gnoga.log("Just before declaring task");
+
    Pi_Access := new Pi_Cube_Client_Pkg.Pi_Comms_Thread;
    Pi_Access.Start_Thread
      (Location_Id => Location_Id,
@@ -54,12 +53,18 @@ begin
       -- loop over the rooms
       --for count in 1..Get_Number_Of_Rooms
       else
-         Gnoga.log (Number_Of_Cubes'img & "Detected - cannot start");
+         Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location_Id,
+                   Debug_Message => "EXCEPTION" & Number_Of_Cubes'img & "Detected - cannot start");
 
    end if;
 
-  Gnoga.log ("Ending PI APP");
+  Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location_Id,
+                   Debug_Message => "STATUS" & " Ending PI APP");
     exception
-         when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
+         when E : others => Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location_Id,
+                   Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
 end Pi_Dsa_Client;

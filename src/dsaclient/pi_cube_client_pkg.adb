@@ -3,12 +3,13 @@ with GNAT.Sockets.Server; use GNAT.Sockets.Server;
 with GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client;
 use GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client;
 with GNAT.Sockets.Server.Handles;  use GNAT.Sockets.Server.Handles;
-with Gnoga;
+
 with Pi_Specific_Data_Pkg; use Pi_Specific_Data_Pkg;
 with Ada;
 with Ada.Exceptions;
+with Fifo_Po;
 with Schedule_Conversion_Pkg;
-
+with Gnoga;
 -- dsa specific packages
 --with Terminal; use Terminal;
 with Dsa_Usna_Server;
@@ -16,7 +17,25 @@ with Dsa_Usna_Server;
 package body  Pi_Cube_Client_Pkg is
 
    Timeout_Delay : Duration := 5.0;
+   package Device_Data_Fifo_Po is new Fifo_Po
+     (Element_Type => Device_Data);
 
+   Data_Po : Device_Data_Fifo_Po.The_PO;
+   type Adjusted_Cube_Client is new GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client
+    with null record;
+
+   overriding
+
+   procedure Data_Received (Client : in out Adjusted_Cube_Client ;
+                                   Data   :  Device_Data) is
+   begin
+      GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.Data_Received
+        (Client => GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client(Client),
+         Data   => Data);
+      Data_Po.Push(Item => Data);
+
+      Gnoga.log(Data.Kind_Of'img & "push onto PO ");
+   end Data_Received;
 
 
    Task body Pi_Comms_Thread  is
@@ -35,17 +54,17 @@ package body  Pi_Cube_Client_Pkg is
           );
       Set
         (  Reference,
-           new ELV_MAX_Cube_Client
+           new Adjusted_Cube_Client
              (  Listener    => Server'Unchecked_Access,
                 Line_Length => 4096,
                 Input_Size  => 80,
                 Output_Size => 200
                )      );
       declare
-         Client : ELV_MAX_Cube_Client renames
-           ELV_MAX_Cube_Client (Ptr (Reference).all);
+         Client : Adjusted_Cube_Client renames
+           Adjusted_Cube_Client (Ptr (Reference).all);
       begin
-         Gnoga.log("Start of task - before rendezvous");
+         --Gnoga.log("Start of task - before rendezvous");
          accept  Start_Thread(Location_Id : in Location_Id_Type;
                               Cube : in String)  do
 
@@ -56,7 +75,9 @@ package body  Pi_Cube_Client_Pkg is
                  Cube,
                  ELV_MAX_Cube_Port
                 );
-            Gnoga.log("Post rendezvous");
+            Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location,
+                   Debug_Message =>"Post rendezvous");
          end Start_Thread;
 
          while not Is_Connected (Client) loop -- Busy waiting
@@ -66,7 +87,9 @@ package body  Pi_Cube_Client_Pkg is
             Delay_Count := Delay_Count + 1;
             if Delay_Count=10 then
                Delay_Count:= 0;
-               Gnoga.log(" Archiver not started ");
+               Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location,
+                   Debug_Message => " Archiver not started ");
             end if;
 
             delay 1.0;
@@ -81,8 +104,12 @@ package body  Pi_Cube_Client_Pkg is
             Number_Of_Devices : Natural := Get_Number_Of_Devices(Client);
             --Rir_Array : Rir_Array_Type(1..Room_Id(Number_Of_Rooms));
          begin
-            Gnoga.log("Number of Rooms " & Number_Of_Rooms'img);
-            Gnoga.log("Number_Of_Devices" & Number_Of_Devices'img);
+             Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location,
+                   Debug_Message => "Number of Rooms " & Number_Of_Rooms'img);
+             Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location,
+                   Debug_Message => "Number_Of_Devices" & Number_Of_Devices'img);
             Pi_Data.Set_Number_Rooms(Number_Of_Rooms);
 
 
@@ -112,7 +139,9 @@ package body  Pi_Cube_Client_Pkg is
                         Dsa_Usna_Server.Set_number_Of_Rooms
                           (Location => Location,
                            Rooms    => Room_Id_Type(Number_Of_Rooms));
-                        Gnoga.log(Room_Name);
+                         Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location,
+                   Debug_Message =>Room_Name);
                         for Second_Count in 1..Number_Of_Devices loop
                            declare
                               Device : positive := Get_Device(Client => Client,
@@ -131,8 +160,12 @@ package body  Pi_Cube_Client_Pkg is
 
                            begin
 
-                              Gnoga.log(Device_Name & " in " & Room_Name);
-                              gnoga.log(Image(Data));
+                               Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location,
+                   Debug_Message =>Device_Name & " in " & Room_Name);
+                               Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location,
+                   Debug_Message =>Image(Data));
                               -- Put the Data in a RIR format ready for transmission
 
                               Pi_Data.Process_Data(Room => Room,
@@ -151,7 +184,9 @@ package body  Pi_Cube_Client_Pkg is
                         Room_Data : Room_Information_Record := Pi_Data.Get_Room_Information
                           (Room => Room);
                      begin
-                        Gnoga.log("Sending data  for room :" & Room_Data.Room_Name & " room id " &
+                         Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location,
+                   Debug_Message => "Sending data  for room :" & Room_Data.Room_Name & " room id " &
                                     Room'img);
                         Room_Data.Location := Location;
                         If Get_Number_Of_Devices(Client => Client,
@@ -166,7 +201,9 @@ package body  Pi_Cube_Client_Pkg is
                -- we will check the server to see if there are messages waiting to be serviced.
 
                -- check for messages coming in from server using alert buffer and process these
-               Gnoga.log("Checking TC Buffer from server , instead of local");
+                Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location,
+                   Debug_Message =>"Checking TC Buffer from server , instead of local");
                while not Dsa_Usna_Server.Is_Empty(Location) loop
                   declare
                      TC : TC_Change_Record;
@@ -176,7 +213,9 @@ package body  Pi_Cube_Client_Pkg is
                      Dsa_Usna_Server.Pi_Command_Get
                        (Location => Location,
                         Item => TC);
-                     Gnoga.Log("DSA Buffer has received a record, Location : " & TC.Location'img
+                      Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location,
+                   Debug_Message =>"DSA Buffer has received a record, Location : " & TC.Location'img
                                & " Room id " & TC.Room'img &  " Day " & TC.Day'img
                                & " TC_CHange " & TC.TC_Change'img );
                      delay 5.0;-- give the server time for the temperatures to up as well
@@ -223,11 +262,15 @@ package body  Pi_Cube_Client_Pkg is
             end loop;
 
          exception
-            when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
+            when E : others =>  Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location,
+                   Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
          end;
       exception
-         when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
+         when E : others => Dsa_Usna_Server. Send_Debug_Message
+                 ( Location => Location,
+                   Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
       end;
 
    end Pi_Comms_Thread;
