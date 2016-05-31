@@ -30,6 +30,9 @@ package User_Password_Check_Pkg is
         (User , Password : in string)
          return Serial_Type;
 
+      function Get_Serial_From_User (User : in String)
+                                     return Serial_Type;
+
       procedure User_Admin_Setting
         (User : in string;
          Admin : in boolean);

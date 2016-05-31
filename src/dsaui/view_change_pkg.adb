@@ -17,6 +17,8 @@ with Ada.Exceptions;
 with Usna_Admin_Gnoga_Pkg;
 with Edit_Room_Details_Gnoga_Pkg;
 with Label_Function_Pkg;
+with User_Details_Gnoga_Pkg;
+with Bookings_Gnoga_Pkg;
 Package body  View_Change_Pkg is
    use Gnoga;
    use Gnoga.Types;
@@ -40,7 +42,10 @@ Package body  View_Change_Pkg is
             Usna_Rooms_Gnoga_Pkg.Update_Rooms_View(App);
          when Room_Edit_View =>
             Edit_Room_Details_Gnoga_Pkg.Update_Edit_Schedule_View(App);
-
+         when User_Details_View =>
+            User_Details_Gnoga_Pkg.Update_User_Details_View(App);
+         when Bookings_View =>
+            Bookings_Gnoga_Pkg.Update_Bookings_View(App);
 
       end case;
       Gnoga.Log(App.Current_View_Selected'img & "updated ");
@@ -67,6 +72,10 @@ Package body  View_Change_Pkg is
          when Room_Edit_View =>
             Edit_Room_Details_Gnoga_Pkg.Build_Edit_Schedule_View(App);
 
+       when User_Details_View =>
+            User_Details_Gnoga_Pkg.Build_User_Details_View(App);
+         when Bookings_View =>
+            Bookings_Gnoga_Pkg.Build_Bookings_View(App);
 
 
       end case;

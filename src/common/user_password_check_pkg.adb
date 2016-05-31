@@ -36,7 +36,7 @@ package body User_Password_Check_Pkg is
                gnoga.log("password ok");
             else
                Return_Value := Bad_Password_Serial;
-               gnoga.log("password crap");
+               gnoga.log("bad password");
 
             end if;
          else
@@ -48,6 +48,28 @@ package body User_Password_Check_Pkg is
             return Blank_Serial;
 
       end Check_User_Password;
+
+      function Get_Serial_From_User (User : in String)
+                                     return Serial_Type is
+
+         Offset : Natural := Users.Locate(Name => User);
+         Return_Value : Serial_Type;
+         User_Data : User_Record;
+      begin
+         If Offset > 0 then
+            -- the user was found -- hooray!
+            User_Data := Users.GetTag(Offset);
+
+            Return_Value := User_Data.Serial_Number;
+         else
+
+            Return_Value := Bad_Password_Serial;
+         end if;
+         return Return_Value;
+
+      end Get_Serial_From_User;
+
+
 
       procedure User_Admin_Setting
         (User : in string;

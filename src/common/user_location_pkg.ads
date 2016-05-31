@@ -3,7 +3,7 @@ with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Tables;
 with Identity_Types_Pkg; use Identity_Types_Pkg;
 
-with User_And_Location_Types_Pkg; use User_And_Location_Types_Pkg;
+with Location_Types_Pkg; use Location_Types_Pkg;
 package User_Location_Pkg is
 
 
@@ -52,6 +52,9 @@ package User_Location_Pkg is
         (Users_Access : in Access_Array_Type)
         return Location_Array_Type;
 
+      function Get_Location_Bookable
+        (Location : in Location_Id_Type)
+         return boolean;
 
    private
       Id_Table : Location_By_Id_Table.Table;

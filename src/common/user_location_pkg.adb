@@ -9,11 +9,13 @@ package body User_Location_Pkg is
         (Location_Id => 1,
          Description => To_Unbounded_String("S I B C"),
          Serial_No => To_Unbounded_String(""),
+         Bookable => false,
          Port => 2221);
       Bobs_House : Location_Record :=
         (Location_Id => 2,
          Description => To_Unbounded_String("Bobs House"),
          Serial_No => To_Unbounded_String(""),
+         Bookable => false,
           Port => 2222);
 
 
@@ -218,7 +220,9 @@ end Get_Location_Id_From_Serial;
 
       end Get_Authorised_Locations;
 
-
+       function Get_Location_Bookable
+        (Location : in Location_Id_Type)
+         return boolean;
 
 
    end Location_Object;

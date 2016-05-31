@@ -23,9 +23,9 @@ package Usna_App_Data_Pkg is
      (Login_View,
       Admin_View,
       Rooms_View,
-      Room_Edit_View--,
-      --Edit_Room_View,
-      --Holiday_View
+      Room_Edit_View,
+      User_Details_View,
+      Bookings_View
      );
 
 
@@ -42,20 +42,20 @@ package Usna_App_Data_Pkg is
    type Location_Button_Array is array(Location_Id_Type) of Common.Button_Type;
 
    type Ub2_String_Array is Array
-     (View_Select_Type  range Admin_View..Rooms_View)
+     (View_Select_Type  range Admin_View..Bookings_View)
      of Unbounded_String;
 
    type Ub_String_Array is Array
-     (View_Select_Type  range Admin_View..Rooms_View)
+     (View_Select_Type  range Admin_View..Bookings_View)
      of Ub2_String_Array;
    Common_Button_Names : constant Ub_String_Array :=
      ( Others =>
          (  To_Unbounded_String("Admin View "),
-            To_Unbounded_String("Rooms View ")--,
-           -- To_Unbounded_String("Edit Room")--,
-           -- To_Unbounded_String("Edit Holidays")
-           )
-      );
+            To_Unbounded_String("Rooms View "),
+            To_Unbounded_String("Edit Room"),
+             To_Unbounded_String("Edit User Details"),
+           To_Unbounded_String("Bookings View")
+      ));
 
    type Form_Array_Type is array(View_Select_Type)
      of Form.Form_Type;
@@ -63,7 +63,7 @@ package Usna_App_Data_Pkg is
    type View_Nav_Array is array(View_Select_Type) of Form.Fieldset.Fieldset_Type;
 
 
-   type Login_Window_Data_Record is record
+    type Login_Window_Data_Record is record
 
       Title_Label : Common.Span_Type;
       Password_Label : Common.Span_Type;
@@ -98,8 +98,6 @@ package Usna_App_Data_Pkg is
       Back_Button : Common.Button_Type;
       Room_Buttons: Room_Button_Array_Access;
       Max_Room_Id, Current_Room_Id : Room_Id_Type;
-
-
 
 
    end record;
@@ -142,7 +140,7 @@ package Usna_App_Data_Pkg is
         (Economy_Mode => 15.0,
          Comfort_Mode => 21.0);
 
-       -- Fsets for form
+      -- Fsets for form
       Schedule_Button_Fset : Form.Fieldset.Fieldset_Type;
 
       Week_Day_Sets :  Weekly_Tags_Array_Type;
@@ -156,7 +154,7 @@ package Usna_App_Data_Pkg is
 
 
 
-  type Edit_Room_Record is Record
+   type Edit_Room_Record is Record
 
       Title_Label : Common.Span_Type;
       Back_Button : Common.Button_Type;
@@ -186,35 +184,41 @@ package Usna_App_Data_Pkg is
       Day_Button          : Common.Button_Type;
       Am_Pm_Button        : Common.Button_Type;
 
-     Right_Click_Active : boolean := false;
+      Right_Click_Active : boolean := false;
    end Record;
 
 
 
---     type Holiday_Window_Data_Record is record
---
---        Title_Label : Common.Span_Type;
---
---        Button_Fset,
---        Control_Fset    : Form.Fieldset.Fieldset_Type;
---        Add_Button,
---        Delete_Button,
---        Modify_Button   : Common.Button_Type;
---
---        Activate_Button,
---        Cancel_Button,
---        Update_Button : Common.Button_Type;
---        Holiday_Input  : Form.Text_Type;
---        Holiday_Select : Form.Selection_Type;
---        From_Dp, To_Dp : Form.Date_Type;
---        Holiday_Replace : Boolean := true;
---        Old_Holiday_Name : Holiday_Name_Type;
---        Old_Holiday_Name_Length : Natural := 0;
---        Current_Holiday_Active : Boolean;
---     end record;
+  type User_Details_Window_Data_Record is record
+      Title_Label : Common.Span_Type;
+      Email_Label : Common.Span_Type;
+      Email_First : Email_Type;
+      Email_Compare_Label : Common.Span_Type;
+      Email_Second : Email_Type;
+      Modify_Email_Button : Common.Button_Type;
+      Commit_Change_Email_Button : Common.Button_Type;
+      Email_Error_Tag : Common.Span_Type;
+      Box_Id : Common.Span_Type;
+      Box_Id_Input : Text_Type;
+      Box_Id_Input_Compare : Text_Type;
+      Modify_Box_Id_Button : Common.Button_Type;
+      Commit_Change_Box_Id_Button : Common.Button_Type;
+      Normal_Or_Bookable_Mode_Label : Common.Span_Type;
+      Change_The_Mode_Button : Common.Button_Type;
 
 
 
+   end record;
+
+   type Bookings_Window_Data_Record is record
+      Title_Label : Common.Span_Type;
+      Bookings_Selection : Selection_Type;
+      Modify_Booking_Button : Common.Button_Type;
+      Delete_Booking_Button : Common.Button_Type;
+      New_Booking_Button : Common.Button_Type;
+
+
+   end record;
 
 
 
@@ -226,9 +230,10 @@ package Usna_App_Data_Pkg is
          Room_Change  : Boolean := true;
          Location_Change :Boolean := true;
          Email_And_Password_Valid : Boolean := false;
+
          Admin : boolean := false;
---           Current_Schedule : Unbounded_String := To_Unbounded_String("");
---           Current_Command_Id : Command_Id_Type := 0;
+         --           Current_Schedule : Unbounded_String := To_Unbounded_String("");
+         --           Current_Command_Id : Command_Id_Type := 0;
          Location_id : Location_Id_Type;
 
          View_Initial : View_Initial_Array := ( others => true);
@@ -251,8 +256,11 @@ package Usna_App_Data_Pkg is
 
          Rooms_Record : Rooms_Window_Data_Record;
 
-            Edit_Record : Edit_Rooms_Window_Data_Record;
+         Edit_Record : Edit_Rooms_Window_Data_Record;
 
+         User_Record : User_Details_Window_Data_Record;
+
+         Bookings_Record : Bookings_Window_Data_Record;
 
          --Holiday_Record : Holiday_Window_Data_Record;
 
