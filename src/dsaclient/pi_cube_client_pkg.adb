@@ -35,6 +35,9 @@ package body  Pi_Cube_Client_Pkg is
       Data_Po.Push(Item => Data);
 
       Gnoga.log(Data.Kind_Of'img & "push onto PO ");
+   exception
+      when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
    end Data_Received;
 
 
@@ -86,6 +89,8 @@ package body  Pi_Cube_Client_Pkg is
             if Delay_Count=10 then
                Delay_Count:= 0;
                Gnoga.log( " Archiver not started ");
+            else
+               Gnoga.log("Archiver OK - starting main task");
             end if;
 
             delay 1.0;
@@ -94,6 +99,8 @@ package body  Pi_Cube_Client_Pkg is
           Dsa_Usna_Server.Register_Pi
              (Terminal => Terminal.My_Terminal'access,
               Location => Location );
+         Gnoga.log("We have location 1" );
+
          declare
             --Room_Register_Success  : boolean;
             Number_Of_Rooms : Natural := Get_Number_Of_Rooms (Client);
@@ -161,6 +168,9 @@ package body  Pi_Cube_Client_Pkg is
 
                            end;
                         end loop;
+                     exception
+                        when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
                      end;
                   end loop;
                   for count in 1..Number_Of_Rooms loop
@@ -178,6 +188,8 @@ package body  Pi_Cube_Client_Pkg is
                                                  ID     => Room) > 0 then
                            Dsa_Usna_Server.Submit_Room_data(Room_Data => Room_Data );
                         end if;
+                     exception
+                        when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
                      end;
                   end loop;
@@ -234,7 +246,13 @@ package body  Pi_Cube_Client_Pkg is
                                                        Schedule => New_Schedule.Points);
                            end if;
                         end loop;
+                     exception
+                        when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
                      end ;
+                  exception
+                     when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
                   end ;
 
                end loop; -- end of buffer empty
