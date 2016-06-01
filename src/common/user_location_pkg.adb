@@ -1,4 +1,6 @@
 with Gnoga;
+with User_Password_Check_Pkg;
+use User_Password_Check_Pkg;
 
 
 package body User_Location_Pkg is
@@ -6,24 +8,23 @@ package body User_Location_Pkg is
 
    procedure Initialise is
       SIBC : Location_Record :=
-        (Location_Id => 1,
+        (Location_Id => 2,
          Description => To_Unbounded_String("S I B C"),
          Serial_No => To_Unbounded_String(""),
-         Bookable => false,
-         Port => 2221);
+         Bookable => false);
       Bobs_House : Location_Record :=
-        (Location_Id => 2,
+        (Location_Id => 1,
          Description => To_Unbounded_String("Bobs House"),
          Serial_No => To_Unbounded_String(""),
-         Bookable => false,
-          Port => 2222);
+         Bookable => false);
 
 
      Here : boolean;
 
    begin
-      Location_Object.Add_Location(SIBC);
       Location_Object.Add_Location(Bobs_House);
+      Location_Object.Add_Location(SIBC);
+
       Here := Location_Object.IsIn(SIBC.Location_Id);
       Gnoga.log(To_String(SIBC.Description) & " Added ok ? " & Here'img);
       Here := Location_Object.IsIn(Bobs_House.Location_Id);
@@ -95,8 +96,7 @@ end Get_Location_Id_From_Serial;
 
       begin
          if Location.Location_Id > 0 and
-           Location.Description /= To_Unbounded_String("") and
-           Location.Port > 0 then
+           Location.Description /= To_Unbounded_String("")  then
             if (not Id_Table.IsIn(Location.Location_Id'img)) and
               (not Name_Table.Isin(To_String(Location.Description))) then
 
@@ -139,7 +139,7 @@ end Get_Location_Id_From_Serial;
                     (Location_Id => Place_In,
                      Description => To_Unbounded_String("Describe the Location"),
                      Serial_No => Serial_Number,
-                     Port => 0);
+                    Bookable => false);
                begin
                   Id_Table.Add(Name => Place_In'img,
                                Data => Location_Data);
@@ -162,7 +162,7 @@ end Get_Location_Id_From_Serial;
 
 
       procedure Modify_Location_Name
-        ( Location_Name : in Unbounded_String := Blank_Ustring;
+        ( Location_Name : in Unbounded_String := User_Password_Check_Pkg.Blank_Ustring;
           Cube_Serial_Number : in Unbounded_String := Blank_Ustring;
          Success : out Boolean) is
 
@@ -188,7 +188,39 @@ end Get_Location_Id_From_Serial;
          end if;
       end Modify_Location_Name;
 
+    procedure Set_Location_To_Bookable
+        (Location : in Location_Id_Type) is
+        Location_Data : Location_Record;
+         Offset : Natural := Id_Table.Locate(Location'img);
 
+      begin
+         if Offset > 0 then
+            Location_Data := Id_Table.GetTag(Offset => Offset);
+            Location_Data.Bookable := true;
+            Id_Table.Replace
+              (Offset => Offset,
+               Data   => Location_Data);
+
+         end if;
+      end Set_Location_To_Bookable;
+
+
+      procedure Set_Location_To_Not_Bookable
+        (Location : in Location_Id_Type) is
+                 Location_Data : Location_Record;
+         Offset : Natural := Id_Table.Locate(Location'img);
+
+      begin
+         if Offset > 0 then
+            Location_Data := Id_Table.GetTag(Offset => Offset);
+            Location_Data.Bookable := false;
+            Id_Table.Replace
+              (Offset => Offset,
+               Data   => Location_Data);
+
+         end if;
+
+    end Set_Location_To_Not_Bookable;
 
 
       function Get_Occupied_Locations
@@ -222,7 +254,20 @@ end Get_Location_Id_From_Serial;
 
        function Get_Location_Bookable
         (Location : in Location_Id_Type)
-         return boolean;
+         return boolean is
+         Return_Value : boolean;
+            Offset : Natural := Id_Table.Locate(Location'img);
+       The_Record : Location_Record ;
+      begin
+         if Offset >0 then
+            The_Record := Id_Table.GetTag(Offset => Offset);
+            Return_Value := The_Record.Bookable;
+         else
+            Gnoga.log("Invalid Location ID referred to ");
+         end if;
+         return Return_Value;
+
+         end Get_Location_Bookable;
 
 
    end Location_Object;

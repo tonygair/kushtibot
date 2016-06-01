@@ -107,7 +107,7 @@ project Kushtibot is
                                                          for Source_Dirs use (".", "src/**");
 
                                                       when "unixODBC" =>
-                                                         for Main use ("archiver.adb", "kushtibot-main.adb", "pi_dsa_client.adb", "usna_main.adb");
+                                                         for Main use ("archiver.adb", "kushtibot-main.adb", "pi_dsa_client.adb", "usna_main.adb", "usna_test_without_dsa.adb");
                                                          for Source_Dirs use (".", "src/**");
                                                    end case;
                                              end case;
@@ -187,7 +187,23 @@ project Kushtibot is
                                           case Prj_Build is
 
                                              when "Debug" =>
-                                                for Default_Switches ("ada") use ("-lopenzwave");
+
+                                                case Arch is
+
+                                                   when "x86_64" =>
+                                                      for Default_Switches ("ada") use ("-lopenzwave");
+
+                                                   when "i686" =>
+
+                                                      case Odbc is
+
+                                                         when "ODBC32" =>
+                                                            for Default_Switches ("ada") use ("-lopenzwave");
+
+                                                         when "unixODBC" =>
+                                                            for Default_Switches ("ada") use ("-lopenzwave", "-g");
+                                                      end case;
+                                                end case;
 
                                              when "Release" =>
 
@@ -211,6 +227,252 @@ project Kushtibot is
 
       end case;
    end Linker;
+
+   package Builder is
+
+      case Arch is
+
+         when "x86_64" =>
+
+         when "i686" =>
+
+            case Odbc is
+
+               when "ODBC32" =>
+
+               when "unixODBC" =>
+
+                  case Development is
+
+                     when "Debug" =>
+
+                        case Legacy is
+
+                           when "Ada95" =>
+
+                           when "Ada2005" =>
+
+                              case Atomic_Access is
+
+                                 when "Pragma-atomic" =>
+
+                                 when "GCC-built-ins" =>
+
+                                 when "GCC-long-offsets" =>
+
+                                    case Tasking is
+
+                                       when "Multiple" =>
+
+                                          case Traced_Objects is
+
+                                             when "Off" =>
+
+                                                case Prj_Target is
+
+                                                   when "OSX" =>
+
+                                                   when "Windows" =>
+
+                                                   when "Freebsd" =>
+
+                                                   when "Linux" =>
+
+                                                   when "Unix" =>
+
+                                                      case Prj_Build is
+
+                                                         when "Debug" =>
+                                                            for Default_Switches ("ada") use ("-j4");
+
+                                                         when "Release" =>
+
+                                                      end case;
+                                                end case;
+
+                                             when "On" =>
+
+                                          end case;
+
+                                       when "Single" =>
+
+                                    end case;
+                              end case;
+
+                           when "Ada2012" =>
+
+                        end case;
+
+                     when "Release" =>
+
+                  end case;
+            end case;
+      end case;
+   end Builder;
+
+   package Compiler is
+
+      case Arch is
+
+         when "x86_64" =>
+
+         when "i686" =>
+
+            case Odbc is
+
+               when "ODBC32" =>
+
+               when "unixODBC" =>
+
+                  case Development is
+
+                     when "Debug" =>
+
+                        case Legacy is
+
+                           when "Ada95" =>
+
+                           when "Ada2005" =>
+
+                              case Atomic_Access is
+
+                                 when "Pragma-atomic" =>
+
+                                 when "GCC-built-ins" =>
+
+                                 when "GCC-long-offsets" =>
+
+                                    case Tasking is
+
+                                       when "Multiple" =>
+
+                                          case Traced_Objects is
+
+                                             when "Off" =>
+
+                                                case Prj_Target is
+
+                                                   when "OSX" =>
+
+                                                   when "Windows" =>
+
+                                                   when "Freebsd" =>
+
+                                                   when "Linux" =>
+
+                                                   when "Unix" =>
+
+                                                      case Prj_Build is
+
+                                                         when "Debug" =>
+                                                            for Default_Switches ("ada") use ("-fcallgraph-info=su,da", "-g");
+
+                                                         when "Release" =>
+
+                                                      end case;
+                                                end case;
+
+                                             when "On" =>
+
+                                          end case;
+
+                                       when "Single" =>
+
+                                    end case;
+                              end case;
+
+                           when "Ada2012" =>
+
+                        end case;
+
+                     when "Release" =>
+
+                  end case;
+            end case;
+      end case;
+   end Compiler;
+
+   package Binder is
+
+      case Arch is
+
+         when "x86_64" =>
+
+         when "i686" =>
+
+            case Odbc is
+
+               when "ODBC32" =>
+
+               when "unixODBC" =>
+
+                  case Development is
+
+                     when "Debug" =>
+
+                        case Legacy is
+
+                           when "Ada95" =>
+
+                           when "Ada2005" =>
+
+                              case Atomic_Access is
+
+                                 when "Pragma-atomic" =>
+
+                                 when "GCC-built-ins" =>
+
+                                 when "GCC-long-offsets" =>
+
+                                    case Tasking is
+
+                                       when "Multiple" =>
+
+                                          case Traced_Objects is
+
+                                             when "Off" =>
+
+                                                case Prj_Target is
+
+                                                   when "OSX" =>
+
+                                                   when "Windows" =>
+
+                                                   when "Freebsd" =>
+
+                                                   when "Linux" =>
+
+                                                   when "Unix" =>
+
+                                                      case Prj_Build is
+
+                                                         when "Debug" =>
+                                                            for Default_Switches ("ada") use ("-E");
+
+                                                         when "Release" =>
+
+                                                      end case;
+                                                end case;
+
+                                             when "On" =>
+
+                                          end case;
+
+                                       when "Single" =>
+
+                                    end case;
+                              end case;
+
+                           when "Ada2012" =>
+
+                        end case;
+
+                     when "Release" =>
+
+                  end case;
+            end case;
+      end case;
+   end Binder;
 
 end Kushtibot;
 

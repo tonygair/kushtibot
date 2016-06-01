@@ -79,6 +79,9 @@ package body  User_Details_Gnoga_Pkg is
         (Parent  => App.Form_Array(User_Details_View),
          Content => "Commit Change to Serial" );
 
+      App.User_Record.Commit_Change_Box_Id_Button.Visible
+        (Value => False);
+
 
 
 

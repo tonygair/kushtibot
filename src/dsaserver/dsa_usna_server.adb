@@ -669,6 +669,8 @@ package body Dsa_Usna_Server is
                if New_Room then
                   Gnoga.log("New_Room_Created called " & Room_Data.Room_Name
                             & " at " & Room_data.Room'img);
+               else
+                  Gnoga.log("Room already there : " & Room_Data.Room_Name);
                end if;
                declare
                   Archive_Terminal : Terminal_Access := Database_Ok.Get_Archive_Terminal;

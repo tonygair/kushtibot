@@ -5,9 +5,9 @@ with Dsa_Usna_Server;
 package body Pi_Specific_Data_Pkg is
 
 
---     procedure Deallocate_Device is new Ada.Unchecked_Deallocation
---       (Object => Device_Parameters,
---        Name => Device_Parameter_Access);
+   --     procedure Deallocate_Device is new Ada.Unchecked_Deallocation
+   --       (Object => Device_Parameters,
+   --        Name => Device_Parameter_Access);
 
    procedure Deallocate_RIR is new Ada.Unchecked_Deallocation
      (Object => Room_Information_Record,
@@ -20,6 +20,9 @@ package body Pi_Specific_Data_Pkg is
    procedure Deallocate_RBA is new Ada.Unchecked_Deallocation
      (Object => Room_Boolean_Array_Type,
       Name   => RBA_Access);
+
+
+
    protected body  Pi_Data is
 
       procedure Reset is
@@ -30,10 +33,10 @@ package body Pi_Specific_Data_Pkg is
             end if;
          end loop;
          Deallocate_RBA(RBA);
-          exception
-            when E : others => Dsa_Usna_Server. Send_Debug_Message
-                 ( Location => My_Location_id,
-                   Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+      exception
+         when E : others => Dsa_Usna_Server. Send_Debug_Message
+              ( Location => My_Location_id,
+                Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
       end Reset;
 
@@ -41,10 +44,10 @@ package body Pi_Specific_Data_Pkg is
       function Location_id return Location_Id_Type is
       begin
          return My_Location_Id;
-          exception
-            when E : others => Dsa_Usna_Server. Send_Debug_Message
-                 ( Location => My_Location_id,
-                   Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+      exception
+         when E : others => Dsa_Usna_Server. Send_Debug_Message
+              ( Location => My_Location_id,
+                Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
             return 0;
 
       end Location_Id;
@@ -64,13 +67,13 @@ package body Pi_Specific_Data_Pkg is
             RBA.all := (others => false);
 
          end if;
-          exception
+      exception
          when E : others =>
             Dsa_Usna_Server. Send_Debug_Message
-                 ( Location => My_Location_id,
-                   Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+              ( Location => My_Location_id,
+                Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
-         end Set_Number_Rooms;
+      end Set_Number_Rooms;
 
 
       procedure Process_Data
@@ -116,26 +119,26 @@ package body Pi_Specific_Data_Pkg is
 
 
          RBA.all(Room) := true;
-          exception
-            when E : others =>Dsa_Usna_Server. Send_Debug_Message
-                 ( Location => My_Location_id,
-                   Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+      exception
+         when E : others =>Dsa_Usna_Server. Send_Debug_Message
+              ( Location => My_Location_id,
+                Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
       end Process_Data;
 
 
       function Room_Data_Ready (Room: in Room_Id)
-      return boolean is
+                                return boolean is
       begin
          if RBA = null or Room_Array = null then
             return false;
          else
             return RBA.all(Room);
          end if;
-          exception
-            when E : others => Dsa_Usna_Server. Send_Debug_Message
-                 ( Location => My_Location_id,
-                   Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+      exception
+         when E : others => Dsa_Usna_Server. Send_Debug_Message
+              ( Location => My_Location_id,
+                Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
             return false;
 
       end Room_Data_Ready;
@@ -151,27 +154,27 @@ package body Pi_Specific_Data_Pkg is
             return Blank_RIR;
          else
 
-         declare
-             Return_Value : Room_Information_Record :=
-              Room_Array.all( Room).all;
+            declare
+               Return_Value : Room_Information_Record :=
+                 Room_Array.all( Room).all;
             begin
-            return Return_Value;
+               return Return_Value;
             end;
          end if;
 
-       exception
-            when E : others => Dsa_Usna_Server. Send_Debug_Message
-                 ( Location => My_Location_id,
-                   Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
-           return Blank_RIR;
+      exception
+         when E : others => Dsa_Usna_Server. Send_Debug_Message
+              ( Location => My_Location_id,
+                Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+            return Blank_RIR;
       end Get_Room_Information;
 
 
 
-   --private
-   --  My_Location_Id : Location_Id_Type;
---      Room_Array : Rir_Access_Type := null;
---        RBA : RBA_Access := null;
+      --private
+      --  My_Location_Id : Location_Id_Type;
+      --      Room_Array : Rir_Access_Type := null;
+      --        RBA : RBA_Access := null;
    end Pi_Data;
 
 

@@ -3,7 +3,7 @@ with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Tables;
 with Identity_Types_Pkg; use Identity_Types_Pkg;
 
-with Location_Types_Pkg; use Location_Types_Pkg;
+with Location_Types; use Location_Types;
 package User_Location_Pkg is
 
 
@@ -45,12 +45,19 @@ package User_Location_Pkg is
       procedure Add_Connected_Location
         (Serial_Number : in Unbounded_String);
 
+      procedure Set_Location_To_Bookable
+        (Location : in Location_Id_Type);
+
+      procedure Set_Location_To_Not_Bookable
+        (Location : in Location_Id_Type);
+
       function Get_Occupied_Locations
         return Location_Occupied_Array_Type;
 
       function Get_Authorised_Locations
         (Users_Access : in Access_Array_Type)
         return Location_Array_Type;
+
 
       function Get_Location_Bookable
         (Location : in Location_Id_Type)
