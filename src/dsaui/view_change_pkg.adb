@@ -33,6 +33,7 @@ Package body  View_Change_Pkg is
    is
       --App : App_Access := App_Access (Object.Connection_Data);
    begin
+      Gnoga.log(" Update View " & App.Current_View_Selected'img );
       case App.Current_View_Selected is
          when Login_View =>
             Usna_Login_View_Gnoga_Pkg.Update_Login_View(App);
@@ -60,6 +61,8 @@ Package body  View_Change_Pkg is
    is
       --App : App_Access := App_Access (Object.Connection_Data);
    begin
+      Gnoga.log(" Build View " & App.Current_View_Selected'img );
+
       case App.Current_View_Selected is
          when Login_View =>
             Usna_Login_View_Gnoga_Pkg.Build_Login_View(App);
@@ -220,22 +223,7 @@ Package body  View_Change_Pkg is
 
          end;
 
-         --
-         --
-         --        declare
-         --           Button_Content : constant string := "Holidays";
-         --        begin
-         --           if View /= Holiday_View then
-         --
-         --              App.Common_Buttons(Holiday_View,View).Create
-         --                (Parent  => App.View_Array(View),
-         --                 Content => Button_Content);
-         --              App.Common_Buttons(Holiday_View,View).On_Click_handler
-         --                (Handler => Go_To_Holiday_View'Unrestricted_Access);
-         --              App.Common_Buttons(Holiday_View,View).Place_Inside_Top_Of
-         --                (Target => App.Nav_Array(View));
-         --           end if;
-         --        end;
+
 
          declare
             Button_Content : constant string := "Admin";
@@ -291,9 +279,11 @@ Package body  View_Change_Pkg is
 
       for count in View_Select_Type loop
          App.View_Array(count).Create(Parent => Main_Window);
+         Gnoga.log("View Created " & count'img);
          App.Form_Array(count).Create
            (Parent => App.View_Array(count));
          App.View_Array(count).Visible(false);
+         Gnoga.log("Form Created" & count'img);
       end loop;
 
 

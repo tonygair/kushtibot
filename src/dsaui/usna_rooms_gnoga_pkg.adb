@@ -76,6 +76,7 @@ package Body Usna_Rooms_Gnoga_Pkg is
            (1..Total_Rooms);
    begin
 
+      Gnoga.log ("Number of Rooms to display := " &Total_Rooms'img);
       if App.Rooms_Record.Back_Button.ID = "Room Back Button" or App.Admin then
          null;
       else
