@@ -11,7 +11,7 @@ with Fifo_Po;
 with Schedule_Conversion_Pkg;
 with Gnoga;
 -- dsa specific packages
---with Terminal; use Terminal;
+with Terminal; use Terminal;
 with Dsa_Usna_Server;
 --with Alert_Buffer; use Alert_Buffer; -- remote messages coming in from server
 package body  Pi_Cube_Client_Pkg is
@@ -95,9 +95,9 @@ package body  Pi_Cube_Client_Pkg is
             delay 1.0;
          end loop;
 
---          Dsa_Usna_Server.Register_Pi
---             (Terminal => Terminal.My_Terminal'access,
---              Location => Location );
+          Dsa_Usna_Server.Register_Pi
+             (Terminal => Terminal.My_Terminal'access,
+              Location => Location );
          declare
             --Room_Register_Success  : boolean;
             Number_Of_Rooms : Natural := Get_Number_Of_Rooms (Client);
