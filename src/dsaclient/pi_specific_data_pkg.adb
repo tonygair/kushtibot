@@ -33,6 +33,8 @@ package body Pi_Specific_Data_Pkg is
             end if;
          end loop;
          Deallocate_RBA(RBA);
+         Messages_Per_Room := (others => 0);
+
       exception
          when E : others => Dsa_Usna_Server. Send_Debug_Message
               ( Location => My_Location_id,
@@ -60,10 +62,11 @@ package body Pi_Specific_Data_Pkg is
 
       procedure Set_Number_Rooms (Room_Size : in Natural) is
       begin
-         if Room_Array = null and RBA = null then
+         if Room_Array = null and RBA = null  then
             Room_Array := new Room_Array_Type(0..Room_Id(Room_Size));
             RBA := new Room_Boolean_Array_Type
               (0..Room_ID(Room_Size));
+
             RBA.all := (others => false);
 
          end if;
@@ -76,11 +79,14 @@ package body Pi_Specific_Data_Pkg is
       end Set_Number_Rooms;
 
 
+
+
       procedure Process_Data
         (Room : in Room_Id;
          Roomname : in string;
          Data : in Device_Data) is
-      begin
+                      begin
+
          if Room_Array.all(Room) = null then
             declare
                RIR : Room_Information_Record :=
@@ -119,6 +125,8 @@ package body Pi_Specific_Data_Pkg is
 
 
          RBA.all(Room) := true;
+       Messages_Per_Room(Room) := Messages_Per_Room(Room) + 1;
+
       exception
          when E : others =>Dsa_Usna_Server. Send_Debug_Message
               ( Location => My_Location_id,
@@ -127,19 +135,27 @@ package body Pi_Specific_Data_Pkg is
       end Process_Data;
 
 
-      function Room_Data_Ready (Room: in Room_Id)
-                                return boolean is
+      procedure Room_Data_Ready
+        (Room: in Room_Id;
+         Device_Count : in natural;
+        Ready : out boolean) is
+         Return_Value : Boolean;
       begin
-         if RBA = null or Room_Array = null then
-            return false;
-         else
-            return RBA.all(Room);
+         if RBA = null or Room_Array = null or Device_Count = 0 or Room = 0 then
+            Return_Value := false;
+         elsif Messages_Per_Room(Room) = 0 then
+            Return_Value := false;
+         elsif RBA.all(Room) and Messages_Per_Room (Room) >= Device_Count then
+            Messages_Per_Room (Room) := 0;
+            Return_Value := true;
          end if;
+         Ready := Return_Value;
+
       exception
          when E : others => Dsa_Usna_Server. Send_Debug_Message
               ( Location => My_Location_id,
                 Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
-            return false;
+            Ready := false;
 
       end Room_Data_Ready;
 
