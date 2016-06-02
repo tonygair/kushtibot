@@ -57,6 +57,8 @@ package body  Pi_Cube_Client_Pkg is
            (Room     => Room,
             Roomname => Room_Name,
             Data     => Data);
+      else
+         Gnoga.log("Invalid Message sent for Room Name : "& Room_Name & " with ID :" & Room'img);
       end if;
 
 

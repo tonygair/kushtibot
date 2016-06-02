@@ -142,7 +142,7 @@ package body Dsa_Usna_Server is
       --          (Static_Device_Info : in Device_Parameters) ;
 
 
-      Procedure Submit_Room_data
+      Procedure Submit_Room_Data
         (Room_Data : in Room_Information_Record;
          New_Room : out boolean);
 

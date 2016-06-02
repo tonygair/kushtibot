@@ -1,7 +1,8 @@
 with Ada.Unchecked_Deallocation;
 --with Gnoga;
 with Ada.Exceptions;
-with Dsa_Usna_Server;
+--with Dsa_Usna_Server;
+with Gnoga;
 package body Pi_Specific_Data_Pkg is
 
 
@@ -36,9 +37,7 @@ package body Pi_Specific_Data_Pkg is
          Messages_Per_Room := (others => 0);
 
       exception
-         when E : others => Dsa_Usna_Server. Send_Debug_Message
-              ( Location => My_Location_id,
-                Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+         when E : others => Gnoga.Log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
       end Reset;
 
@@ -47,9 +46,7 @@ package body Pi_Specific_Data_Pkg is
       begin
          return My_Location_Id;
       exception
-         when E : others => Dsa_Usna_Server. Send_Debug_Message
-              ( Location => My_Location_id,
-                Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+         when E : others => Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
             return 0;
 
       end Location_Id;
@@ -72,9 +69,7 @@ package body Pi_Specific_Data_Pkg is
          end if;
       exception
          when E : others =>
-            Dsa_Usna_Server. Send_Debug_Message
-              ( Location => My_Location_id,
-                Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+            Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
       end Set_Number_Rooms;
 
@@ -128,9 +123,7 @@ package body Pi_Specific_Data_Pkg is
        Messages_Per_Room(Room) := Messages_Per_Room(Room) + 1;
 
       exception
-         when E : others =>Dsa_Usna_Server. Send_Debug_Message
-              ( Location => My_Location_id,
-                Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+         when E : others =>Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
       end Process_Data;
 
@@ -152,9 +145,7 @@ package body Pi_Specific_Data_Pkg is
          Ready := Return_Value;
 
       exception
-         when E : others => Dsa_Usna_Server. Send_Debug_Message
-              ( Location => My_Location_id,
-                Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+         when E : others => Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
             Ready := false;
 
       end Room_Data_Ready;
@@ -179,9 +170,7 @@ package body Pi_Specific_Data_Pkg is
          end if;
 
       exception
-         when E : others => Dsa_Usna_Server. Send_Debug_Message
-              ( Location => My_Location_id,
-                Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+         when E : others =>Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
             return Blank_RIR;
       end Get_Room_Information;
 
