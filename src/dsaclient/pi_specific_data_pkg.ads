@@ -7,11 +7,10 @@ package Pi_Specific_Data_Pkg is
    type RIR_Access is access Room_Information_Record;
 
 
- type Room_Array_Type is  array (Room_ID range <>) of RIR_Access;
+ type Room_Array_Type is  array (Room_ID ) of RIR_Access;
 
-   type Room_Array_Access is access Room_Array_Type;
 
-   type Room_Boolean_Array_Type is array (Room_Id range <>)
+   type Room_Boolean_Array_Type is array (Room_Id )
      of boolean;
 
    type RBA_Access is access Room_Boolean_Array_Type;
@@ -28,7 +27,6 @@ package Pi_Specific_Data_Pkg is
 
       procedure Set_Location_Id ( Location : in Location_Id_Type);
 
-      procedure Set_Number_Rooms (Room_Size : in Natural);
 
 
       procedure Process_Data
@@ -46,8 +44,8 @@ package Pi_Specific_Data_Pkg is
 
    private
       My_Location_Id : Location_Id_Type;
-      Room_Array : Room_Array_Access  := null;
-      RBA : RBA_Access := null;
+      Room_Array : Room_Array_Type  :=  (others => null);
+      RBA : Room_Boolean_Array_Type := (others => false);
       Messages_Per_Room : Messages_Per_Room_Array_Type := (others => 0);
    end Pi_Data;
 

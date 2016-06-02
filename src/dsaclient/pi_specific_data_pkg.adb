@@ -14,9 +14,9 @@ package body Pi_Specific_Data_Pkg is
      (Object => Room_Information_Record,
       Name => RIR_Access);
 
-   procedure Deallocate_RIR_Array is new Ada.Unchecked_Deallocation
-     (Object => Room_Array_Type,
-      Name => Room_Array_Access);
+--     procedure Deallocate_RIR_Array is new Ada.Unchecked_Deallocation
+--       (Object => Room_Array_Type,
+--        Name => Room_Array_Access);
 
    procedure Deallocate_RBA is new Ada.Unchecked_Deallocation
      (Object => Room_Boolean_Array_Type,
@@ -33,7 +33,7 @@ package body Pi_Specific_Data_Pkg is
                Deallocate_RIR (Room_Array(count));
             end if;
          end loop;
-         Deallocate_RBA(RBA);
+        RBA := (others => false);
          Messages_Per_Room := (others => 0);
 
       exception
@@ -57,22 +57,6 @@ package body Pi_Specific_Data_Pkg is
          My_Location_Id := Location;
       end Set_Location_Id;
 
-      procedure Set_Number_Rooms (Room_Size : in Natural) is
-      begin
-         if Room_Array = null and RBA = null  then
-            Room_Array := new Room_Array_Type(0..Room_Id(Room_Size));
-            RBA := new Room_Boolean_Array_Type
-              (0..Room_ID(Room_Size));
-
-            RBA.all := (others => false);
-
-         end if;
-      exception
-         when E : others =>
-            Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
-
-      end Set_Number_Rooms;
-
 
 
 
@@ -80,9 +64,9 @@ package body Pi_Specific_Data_Pkg is
         (Room : in Room_Id;
          Roomname : in string;
          Data : in Device_Data) is
-                      begin
+      begin
 
-         if Room_Array.all(Room) = null then
+         if Room_Array(Room) = null then
             declare
                RIR : Room_Information_Record :=
                  (Roomname_Length => Roomname'length,
@@ -96,21 +80,21 @@ package body Pi_Specific_Data_Pkg is
                   Room_Name => Roomname);
 
             begin
-               Room_Array.all(Room) := new Room_Information_Record'(RIR);
+               Room_Array(Room) := new Room_Information_Record'(RIR);
             end;
          end if;
 
-         Room_Array.all(Room).Error_In_Room := Data.Error or Room_Array.all(Room).Error_In_Room;
-         Room_Array.all(Room).Link_Error := Data.Link_Error or Room_Array.all(Room).Link_Error;
+         Room_Array(Room).Error_In_Room := Data.Error or Room_Array(Room).Error_In_Room;
+         Room_Array(Room).Link_Error := Data.Link_Error or Room_Array(Room).Link_Error;
          --Room_Array.all(Room).Battery_Low := Data.Battery_Low ;
 
          case Data.Kind_Of is
             when  Radiator_Thermostat | Radiator_Thermostat_Plus =>
 
-               Room_Array.all(Room).Set_Point :=
+               Room_Array(Room).Set_Point :=
                  C_Centigrade(Data.Set_Temperature);
             when Wall_Thermostat =>
-               Room_Array.all(Room).Actual :=
+               Room_Array(Room).Actual :=
                  C_Centigrade(Data.Temperature);
 
 
@@ -119,7 +103,7 @@ package body Pi_Specific_Data_Pkg is
          end case;
 
 
-         RBA.all(Room) := true;
+         RBA(Room) := true;
        Messages_Per_Room(Room) := Messages_Per_Room(Room) + 1;
 
       exception
@@ -134,11 +118,11 @@ package body Pi_Specific_Data_Pkg is
         Ready : out boolean) is
          Return_Value : Boolean;
       begin
-         if RBA = null or Room_Array = null or Device_Count = 0 or Room = 0 then
+         if not RBA(Room) or Device_Count = 0 or Room = 0 then
             Return_Value := false;
          elsif Messages_Per_Room(Room) = 0 then
             Return_Value := false;
-         elsif RBA.all(Room) and Messages_Per_Room (Room) >= Device_Count then
+         elsif RBA(Room) and Messages_Per_Room (Room) >= Device_Count then
             Messages_Per_Room (Room) := 0;
             Return_Value := true;
          end if;
@@ -157,13 +141,13 @@ package body Pi_Specific_Data_Pkg is
         (Room : in Room_ID) return Room_Information_Record is
 
       begin
-         if Room_Array.all( Room) = null then
+         if Room_Array( Room) = null then
             return Blank_RIR;
          else
 
             declare
                Return_Value : Room_Information_Record :=
-                 Room_Array.all( Room).all;
+                 Room_Array( Room).all;
             begin
                return Return_Value;
             end;

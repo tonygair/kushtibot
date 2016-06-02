@@ -155,7 +155,6 @@ package body  Pi_Cube_Client_Pkg is
          begin
             Gnoga.log( "Number of Rooms " & Number_Of_Rooms'img & "in location " );
             Gnoga.log( "Number_Of_Devices" & Number_Of_Devices'img);
-            Pi_Data.Set_Number_Rooms(Number_Of_Rooms);
             Dsa_Usna_Server.Set_number_Of_Rooms
               (Location => Location,
                Rooms    => Room_Id_Type(Number_Of_Rooms));
