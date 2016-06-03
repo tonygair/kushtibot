@@ -710,8 +710,16 @@ package body Dsa_Usna_Server is
             Room : in Room_Id_Type ) return Room_Information_Record is
 
          begin
-            if Location_To_Pi(Location) = null
-            then return Blank_RIR;
+            Gnoga.log("Location in, is " & Location'img &
+                        " Room in, is " & Room'img);
+            for count in Location_Id_Type'first..Location_Id_Type'last loop
+               if Location_To_Pi(count) /= null then
+                  Gnoga.log ("Room id is " & count'img & " Serial number is "
+                             &  string(Location_To_Pi(count).Get_Serial_No));
+               end if;
+            end loop;
+            if Location_To_Pi(Location) = null then
+               return Blank_RIR;
             else
 
                return  Location_To_Pi(Location).Get_Room_Data(Room);
