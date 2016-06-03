@@ -25,10 +25,11 @@ package body Special_Fifo_Po is
                       Success : out boolean) is
       begin
          if Element_Discriminator = Peek_At_Discriminator then
-            Success := true;
+
             Element_Fifo.Pop
               (List => The_List,
                Item => Element);
+            Success := true;
          end if;
 
       end Pop;

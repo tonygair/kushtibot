@@ -227,6 +227,7 @@ package body  Pi_Cube_Client_Pkg is
 
 
                else
+                  Process_Waiting_Local_Messages_From_Cube(Client => Client);
                   -- first check outgoing data to decide if theres any to send
                   For room_count in Room_ID(1) .. Room_Id(Number_Of_Rooms) loop
                      Number_Of_Devices := Get_Number_Of_Devices
