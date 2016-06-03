@@ -6,7 +6,7 @@ package Fifo_Po is
       Package Element_Fifo is new Fifo(Element_Type => Element_Type);
 
 
-   protected type The_PO is
+   protected type  The_PO is
 
       procedure Push ( Item : in Element_Type) ;
 
@@ -17,7 +17,9 @@ package Fifo_Po is
 
    private
       The_List : Element_Fifo.Fifo_Type;
+
    end The_PO;
+
 
 
 end Fifo_Po;
