@@ -321,6 +321,19 @@ package body Dsa_Usna_Server is
          end Location_Table_PO;
 
          protected body Location_Table_PO is
+            function List_Serial_Numbers return boolean is
+               Completed : boolean := false;
+            begin
+               for count in 1..Location_Table.GetSize loop
+                  gnoga.log("Location is " & Location_Table.Gettag(count)'img &
+                              " Serial_Number is : " & Location_Table.GetName(count) &
+                              " offset in table is : " & count'img);
+               end loop;
+               Completed := true;
+               return Completed;
+            end List_Serial_Numbers;
+
+
             function Find_Location_Id (Serial_Number : in Serial_Type) return Location_Id_Type is
                Return_Value : Location_Id_Type;
                Place : Natural := Location_Table.Locate(Name => String(Serial_Number));

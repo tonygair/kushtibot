@@ -19,7 +19,7 @@ package body  Pi_Cube_Client_Pkg is
 
    Timeout_Delay : Duration := 5.0;
 
-   Time_Between_Querys : Duration := 600.0;
+   Time_Between_Querys : Duration := 1200.0;
 
    Terminate_The_Task : boolean := false;
 
