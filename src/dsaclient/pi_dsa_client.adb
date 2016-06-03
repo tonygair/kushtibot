@@ -14,7 +14,7 @@ with Ada;
 with Ada.Exceptions;
 
 with Dsa_Usna_Server;
-
+with Gnoga;
 procedure Pi_Dsa_Client is
 
    Timeout_Delay : Duration := 5.0;
@@ -53,18 +53,12 @@ begin
       -- loop over the rooms
       --for count in 1..Get_Number_Of_Rooms
       else
-         Dsa_Usna_Server. Send_Debug_Message
-                 ( Location => Location_Id,
-                   Debug_Message => "EXCEPTION" & Number_Of_Cubes'img & "Detected - cannot start");
+        Gnoga.log( "EXCEPTION" & Number_Of_Cubes'img & "Detected - cannot start");
 
    end if;
 
-  Dsa_Usna_Server. Send_Debug_Message
-                 ( Location => Location_Id,
-                   Debug_Message => "STATUS" & " Ending PI APP");
+  Gnoga.log( "STATUS" & " Ending PI APP");
     exception
-         when E : others => Dsa_Usna_Server. Send_Debug_Message
-                 ( Location => Location_Id,
-                   Debug_Message => "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+         when E : others => Gnoga.log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
 end Pi_Dsa_Client;

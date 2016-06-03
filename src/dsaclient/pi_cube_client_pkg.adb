@@ -13,17 +13,20 @@ with Gnoga;
 -- dsa specific packages
 with Terminal; use Terminal;
 with Dsa_Usna_Server;
+with Ada.Calendar; use Ada.Calendar;
 --with Alert_Buffer; use Alert_Buffer; -- remote messages coming in from server
 package body  Pi_Cube_Client_Pkg is
 
    Timeout_Delay : Duration := 5.0;
 
+   Time_Between_Querys : Duration := 600.0;
+
    Terminate_The_Task : boolean := false;
 
-   package Device_Data_Fifo_Po is new Fifo_Po
-     (Element_Type => Device_Data);
+   --package Device_Data_Fifo_Po is new Fifo_Po
+  --   (Element_Type => Device_Data);
 
-   Data_Po : Device_Data_Fifo_Po.The_PO;
+   --Data_Po : Device_Data_Fifo_Po.The_PO;
    type Adjusted_Cube_Client is new GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client
    with null record;
 
@@ -151,6 +154,7 @@ package body  Pi_Cube_Client_Pkg is
             Number_Of_Rooms : Natural := Get_Number_Of_Rooms (Client);
             Number_Of_Devices : Natural := Get_Number_Of_Devices(Client);
             Message_Ready_For_Room : boolean := false;
+            Last_Query_Done : Ada.Calendar.time := Ada.Calendar.Clock;
             --Rir_Array : Rir_Array_Type(1..Room_Id(Number_Of_Rooms));
          begin
             Gnoga.log( "Number of Rooms " & Number_Of_Rooms'img & "in location " );
@@ -166,8 +170,14 @@ package body  Pi_Cube_Client_Pkg is
             loop
                if Terminate_The_Task then
                   exit;
-               else
+               elsif  (Last_Query_Done +  Time_Between_Querys) < Ada.Calendar.Clock then
+                  Last_Query_Done := Ada.Calendar.Clock;
+                  Query_Devices(Client => Client);
+                  delay 50.0;
+                  gnoga.log("Querying Devices Request Made ");
 
+
+               else
                   -- first check outgoing data to decide if theres any to send
                   For room_count in Room_ID(1) .. Room_Id(Number_Of_Rooms) loop
                      Number_Of_Devices := Get_Number_Of_Devices
@@ -193,8 +203,7 @@ package body  Pi_Cube_Client_Pkg is
                   -- we will check the server to see if there are messages waiting to be serviced.
 
                   -- check for messages coming in from server using alert buffer and process these
-                  Gnoga.log("Checking TC Buffer from server , instead of local");
-                  while not Dsa_Usna_Server.Is_Empty(Location) loop
+                   while not Dsa_Usna_Server.Is_Empty(Location) loop
                      declare
                         TC : TC_Change_Record;
 
