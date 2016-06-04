@@ -14,6 +14,7 @@ with Gnoga;
 with Terminal; use Terminal;
 with Dsa_Usna_Server;
 with Ada.Calendar; use Ada.Calendar;
+with Device_Message_Timings; use Device_Message_Timings;
 --with Alert_Buffer; use Alert_Buffer; -- remote messages coming in from server
 package body  Pi_Cube_Client_Pkg is
 
@@ -22,6 +23,8 @@ package body  Pi_Cube_Client_Pkg is
    Time_Between_Querys : Duration := 1200.0;
 
    Terminate_The_Task : boolean := false;
+
+
 
    function Check_Device_Data_Discriminant ( Element : in Device_Data) return Device_Type is
    begin
@@ -92,6 +95,11 @@ package body  Pi_Cube_Client_Pkg is
 
                   -- Device : Positive := Get_Device (Client => Client,
                   --                                  Address => Data.Address);
+
+                  Device : Positive := Get_Device
+                    (Client  => Client,
+                     Address => The_Data.Address);
+
                   Room : Room_ID := Get_Device_Room
                     (Client => Client,
                      Address => The_Data.Address);
@@ -103,6 +111,8 @@ package body  Pi_Cube_Client_Pkg is
                begin
 
                   if Room_Name'length > 0 and  Room > 0 then
+                     Last_Device_Update.Register_An_Update(Device);
+
                      Pi_Data.Process_Data
                        (Room     => Room,
                         Roomname => Room_Name,
@@ -143,6 +153,38 @@ package body  Pi_Cube_Client_Pkg is
 
    end Disconnected;
 
+   procedure Refresh_Tardy_Devices
+     ( Client : in out Adjusted_Cube_Client;
+       Max_Device_Number : in positive ) is
+
+   begin
+      for count in 1..Max_Device_Number loop
+         if Last_Device_Update.Ripe_For_Update(count) then
+            declare
+               Room :  Room_ID := Get_Room_ID
+                 (Client => Client,
+                  Index  => count);
+               Roomname : string := Get_Room_Name
+                 (Client => Client,
+                  ID     => Room);
+            begin
+               Pi_Data.Process_Data
+                 (Room     => Room ,
+                  Roomname => Roomname,
+                  Data     => Get_Device_Data(Client => Client,
+                                              Index  => count));
+
+            exception
+               when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+            end;
+
+         end if;
+      end loop;
+
+   exception
+      when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
+   end Refresh_Tardy_Devices;
 
 
    Task body Pi_Comms_Thread  is
@@ -228,7 +270,7 @@ package body  Pi_Cube_Client_Pkg is
                   exit;
                elsif  (Last_Query_Done +  Time_Between_Querys) < Ada.Calendar.Clock then
                   Last_Query_Done := Ada.Calendar.Clock;
-                  Query_Devices(Client => Client);
+
                   delay 50.0;
                   gnoga.log("Querying Devices Request Made ");
 

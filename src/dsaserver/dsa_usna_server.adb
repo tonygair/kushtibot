@@ -598,9 +598,13 @@ package body Dsa_Usna_Server is
 
 
          function Check_Serial (Serial_Number : in Serial_Type) return Location_Id_Type is
-
+            Location : Location_Id_Type;
          begin
-            return Location_Table_PO.Find_Location_Id(Serial_Number);
+
+            Location :=  Location_Table_PO.Find_Location_Id(Serial_Number);
+            Gnoga.log ("Serial No is " & string(Serial_Number) &
+                         " matches to location id " & Location'img);
+            return Location;
          exception
             when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
                return 0;
@@ -609,13 +613,16 @@ package body Dsa_Usna_Server is
          function Get_Cube_Serial
            (Location_Id : in Location_Id_Type) return Serial_Type is
 
-
+            Serial_Number : Serial_Type := Blank_Serial;
          begin
             if Location_To_Pi(Location_Id) /= null then
-               return Location_To_Pi(Location_Id).all.Get_Serial_No;
+               Serial_Number := Location_To_Pi(Location_Id).all.Get_Serial_No;
             else
                raise Program_Error;
             end if;
+            Gnoga.log ("Get_Cube_Serial - Serial No is " & string(Serial_Number) &
+                         " matches to location id " & Location_Id'img);
+            return Serial_Number;
          exception
             when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
                return Blank_Serial;
