@@ -33,7 +33,7 @@ package body User_Password_Check_Pkg is
             User_Data := Users.GetTag(Offset);
             if Password = To_String(User_Data.Password) then
                Return_Value := User_Data.Serial_Number;
-               gnoga.log("password ok");
+               gnoga.log("password ok, serial is " & string(User_Data.Serial_Number));
             else
                Return_Value := Bad_Password_Serial;
                gnoga.log("bad password");

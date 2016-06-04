@@ -29,6 +29,9 @@ package body Usna_Login_View_Gnoga_Pkg is
       Admin : boolean := Dsa_Usna_Server.Is_User_An_Admin(Email_String);
 
    begin
+      Gnoga.log(" Serial Number : " & string(Serial_No) &
+                  " Email " & Email_String & " Password " & Password_String);
+
       Gnoga.log(" Is an Admin ? " & Admin'img);
       App.Admin := Admin;
       If Serial_No = Bad_Password_Serial  then
