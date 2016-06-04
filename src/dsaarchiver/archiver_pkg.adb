@@ -48,10 +48,13 @@ package body Archiver_Pkg is
             else
                Is_Admin := true;
             end if;
-
+            Gnoga.log(" User : " & User_Name &
+                        " password : " & Password &
+                        " Serial_Number : " & string(Serial_Number) );
             Dsa_Usna_Server.
               Add_User(User     => User_Name,
                        Password => Password,
+                       Serial_Number => Serial_Number,
                        Is_Admin => Is_Admin,
                        Success  => Success);
             if not Success then
