@@ -85,7 +85,7 @@ package Body Usna_Rooms_Gnoga_Pkg is
       else
          App.Rooms_Record.Title_Label.Create
         (Parent  => App.Form_Array(Rooms_View),
-         Content => "<H1> Editing " &   App.Edit_Record.Room_Data.Room_Name & "'s schedule <H1>");
+         Content => "<H1> Editing Rooms schedule <H1>");
          App.Rooms_Record.Back_Button.Create(Parent  => App.Form_Array(Rooms_View) ,
                                              Content => "Back to  Portfolio",
                                              ID      => "Room Back Button" );

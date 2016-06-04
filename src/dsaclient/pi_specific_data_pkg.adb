@@ -118,6 +118,9 @@ package body Pi_Specific_Data_Pkg is
         Ready : out boolean) is
          Return_Value : Boolean;
       begin
+         Gnoga.log(" Room id : " & Room'img & " Device_Count " & Device_Count'img
+                   & " RBA(Room) " & RBA(Room)'img
+                   & " Messages Per Room " & Messages_Per_Room(Room)'img);
          if not RBA(Room) or Device_Count = 0 or Room = 0 then
             Return_Value := false;
          elsif Messages_Per_Room(Room) = 0 then
