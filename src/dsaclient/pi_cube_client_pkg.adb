@@ -292,6 +292,7 @@ package body  Pi_Cube_Client_Pkg is
                      if Message_Ready_For_Room then
                         Dsa_Usna_Server.Submit_Room_Data
                           (Room_Data => Pi_Data.Get_Room_Information(room_count) );
+
                         Gnoga.log("Data sent to server for room id " & room_count'img);
 
                      end if;

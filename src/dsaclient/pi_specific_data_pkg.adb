@@ -125,7 +125,7 @@ package body Pi_Specific_Data_Pkg is
             Return_Value := false;
          elsif Messages_Per_Room(Room) = 0 then
             Return_Value := false;
-         elsif RBA(Room) and Messages_Per_Room (Room) >= Device_Count then
+         elsif RBA(Room) and Messages_Per_Room (Room) > 0 then
             Messages_Per_Room (Room) := 0;
             Return_Value := true;
          end if;
