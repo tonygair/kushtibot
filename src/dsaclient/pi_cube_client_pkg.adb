@@ -7,23 +7,35 @@ with GNAT.Sockets.Server.Handles;  use GNAT.Sockets.Server.Handles;
 with Pi_Specific_Data_Pkg; use Pi_Specific_Data_Pkg;
 with Ada;
 with Ada.Exceptions;
-with Fifo_Po;
+with Special_Fifo_Po;
 with Schedule_Conversion_Pkg;
 with Gnoga;
 -- dsa specific packages
 with Terminal; use Terminal;
 with Dsa_Usna_Server;
+with Ada.Calendar; use Ada.Calendar;
 --with Alert_Buffer; use Alert_Buffer; -- remote messages coming in from server
 package body  Pi_Cube_Client_Pkg is
 
    Timeout_Delay : Duration := 5.0;
 
+   Time_Between_Querys : Duration := 1200.0;
+
    Terminate_The_Task : boolean := false;
 
-   package Device_Data_Fifo_Po is new Fifo_Po
-     (Element_Type => Device_Data);
+   function Check_Device_Data_Discriminant ( Element : in Device_Data) return Device_Type is
+   begin
+      return Element.Kind_Of;
+   end Check_Device_Data_Discriminant;
+
+
+   package Device_Data_Fifo_Po is new Special_Fifo_Po
+     (Element_Type => Device_Data,
+      Element_Discriminator_Type => Device_Type,
+     Check_Discriminator =>  Check_Device_Data_Discriminant);
 
    Data_Po : Device_Data_Fifo_Po.The_PO;
+
    type Adjusted_Cube_Client is new GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client
    with null record;
 
@@ -40,35 +52,75 @@ package body  Pi_Cube_Client_Pkg is
 
       -- Device : Positive := Get_Device (Client => Client,
       --                                  Address => Data.Address);
-      Room : Room_ID := Get_Device_Room
-        (Client => Client,
-         Address => Data.Address);
 
-      Room_Name : string := Get_Room_Name
-        (Client => Client,
-         ID     => Room);
 
    begin
       GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.Data_Received
         (Client => GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client(Client),
          Data   => Data);
-      if Room_Name'length > 0 and  Room > 0 then
-         Pi_Data.Process_Data
-           (Room     => Room,
-            Roomname => Room_Name,
-            Data     => Data);
-      else
-         Gnoga.log("Invalid Message sent for Room Name : "& Room_Name & " with ID :" & Room'img);
-      end if;
+     Data_Po.Push(Element => Data);
 
 
-      Gnoga.log(Data.Kind_Of'img & " Pi_Data.Process_Data ");
+
+      Gnoga.log(Data.Kind_Of'img & " Added data to internal Data_Po");
    exception
       when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
    end Data_Received;
 
+   type Dd_Access is access Device_Data;
 
+   procedure Process_Waiting_Local_Messages_From_Cube
+     (Client : in out Adjusted_Cube_Client) is
+
+
+
+   begin
+      while not Data_Po.Is_Empty loop
+
+         declare
+            The_Data : Device_Data (Kind_Of => Data_Po.Peek_At_Discriminator) ;
+            Successful_Pop : boolean;
+         begin
+
+            Data_Po.Pop
+              (Element_Discriminator => The_Data.Kind_Of,
+               Element => The_Data,
+               Success => Successful_Pop);
+            if Successful_Pop then
+               declare
+
+                  -- Device : Positive := Get_Device (Client => Client,
+                  --                                  Address => Data.Address);
+                  Room : Room_ID := Get_Device_Room
+                    (Client => Client,
+                     Address => The_Data.Address);
+
+                  Room_Name : string := Get_Room_Name
+                    (Client => Client,
+                     ID     => Room);
+
+               begin
+
+                  if Room_Name'length > 0 and  Room > 0 then
+                     Pi_Data.Process_Data
+                       (Room     => Room,
+                        Roomname => Room_Name,
+                        Data     => The_Data);
+                  else
+                     Gnoga.log("Invalid Message sent for Room Name : "& Room_Name & " with ID :" & Room'img);
+                  end if;
+               end;
+            else
+               delay 0.2;
+
+            end if;
+
+         end;
+
+      end loop;
+
+   end Process_Waiting_Local_Messages_From_Cube;
 
    procedure Disconnected (Client : in out Adjusted_Cube_Client) is
    begin
@@ -151,6 +203,7 @@ package body  Pi_Cube_Client_Pkg is
             Number_Of_Rooms : Natural := Get_Number_Of_Rooms (Client);
             Number_Of_Devices : Natural := Get_Number_Of_Devices(Client);
             Message_Ready_For_Room : boolean := false;
+            Last_Query_Done : Ada.Calendar.time := Ada.Calendar.Clock;
             --Rir_Array : Rir_Array_Type(1..Room_Id(Number_Of_Rooms));
          begin
             Gnoga.log( "Number of Rooms " & Number_Of_Rooms'img & "in location " );
@@ -166,8 +219,15 @@ package body  Pi_Cube_Client_Pkg is
             loop
                if Terminate_The_Task then
                   exit;
-               else
+               elsif  (Last_Query_Done +  Time_Between_Querys) < Ada.Calendar.Clock then
+                  Last_Query_Done := Ada.Calendar.Clock;
+                  Query_Devices(Client => Client);
+                  delay 50.0;
+                  gnoga.log("Querying Devices Request Made ");
 
+
+               else
+                  Process_Waiting_Local_Messages_From_Cube(Client => Client);
                   -- first check outgoing data to decide if theres any to send
                   For room_count in Room_ID(1) .. Room_Id(Number_Of_Rooms) loop
                      Number_Of_Devices := Get_Number_Of_Devices
@@ -193,8 +253,7 @@ package body  Pi_Cube_Client_Pkg is
                   -- we will check the server to see if there are messages waiting to be serviced.
 
                   -- check for messages coming in from server using alert buffer and process these
-                  Gnoga.log("Checking TC Buffer from server , instead of local");
-                  while not Dsa_Usna_Server.Is_Empty(Location) loop
+                   while not Dsa_Usna_Server.Is_Empty(Location) loop
                      declare
                         TC : TC_Change_Record;
 

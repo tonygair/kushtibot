@@ -19,6 +19,17 @@ package body Fifo is
       List.Head := Temp;
    end Push;
 
+   --------
+   -- peek --
+   ------------
+   function Peek (List : in Fifo_Type) return Element_Type is
+      begin
+      if List.Head = null or List.Tail.Value = null then
+         raise Empty_Error;
+      end if;
+      Return List.Tail.Value.all;
+   end Peek;
+
    ---------
    -- Pop --
    ---------

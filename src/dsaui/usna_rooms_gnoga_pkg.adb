@@ -79,13 +79,13 @@ package Body Usna_Rooms_Gnoga_Pkg is
            (1..Total_Rooms);
       begin
 
-      Gnoga.log ("Number of Rooms to display := " &Total_Rooms'img);
+      Gnoga.log ("Number of Rooms to display := " &Total_Rooms'img & "for " & App.Location_id'img);
       if App.Rooms_Record.Back_Button.ID = "Room Back Button" or App.Admin then
          null;
       else
          App.Rooms_Record.Title_Label.Create
         (Parent  => App.Form_Array(Rooms_View),
-         Content => "<H1> Editing " &  App.Edit_Record.Room_Data.Room_Name & "'s schedule <H1>");
+         Content => "<H1> Editing " &   App.Edit_Record.Room_Data.Room_Name & "'s schedule <H1>");
          App.Rooms_Record.Back_Button.Create(Parent  => App.Form_Array(Rooms_View) ,
                                              Content => "Back to  Portfolio",
                                              ID      => "Room Back Button" );

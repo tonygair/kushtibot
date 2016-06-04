@@ -42,8 +42,11 @@ package body Usna_Login_View_Gnoga_Pkg is
 
          if not App.Admin then
             Gnoga.log(" Not an Admin, but the user has a good password and has registered a serial number ");
+
             App.Location_id := Dsa_Usna_Server.Check_Serial (Serial_Number => Serial_No);
-            Gnoga.log("Location " & App.Location_id'img);
+
+            Gnoga.log("Serial_Number " & string(Serial_No) &
+                        "Location id" & App.Location_id'img);
             App.Location_Change := true;
 
             App.Requested_View_Selected := Rooms_View;

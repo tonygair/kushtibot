@@ -3,6 +3,7 @@ generic
 package Fifo is
    type Fifo_Type is private;
    procedure Push(List : in out Fifo_Type; Item : in Element_Type);
+   function Peek (List : in  Fifo_Type) return Element_Type;
    procedure Pop(List : in out Fifo_Type; Item : out Element_Type);
    function Is_Empty(List : Fifo_Type) return Boolean;
    Empty_Error : exception;
