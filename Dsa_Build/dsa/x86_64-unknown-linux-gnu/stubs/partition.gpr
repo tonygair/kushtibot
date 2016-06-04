@@ -1,4 +1,0 @@
-project Partition extends all "/home/tony/Dsa_Build/dsa/x86_64-unknown-linux-gnu/usna_app_dist_app.gpr" is
-   for Object_Dir use ".";
-   --  Pseudo-partition project for RCI calling stubs
-end Partition;

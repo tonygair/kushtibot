@@ -70,11 +70,14 @@ package Body Usna_Rooms_Gnoga_Pkg is
         (App : in out App_Access) is
          --App : App_Access := App_Access(Object.Connection_Data);
 
-         Total_Rooms : Room_Id_Type :=
-           Dsa_Usna_Server.Get_Number_Of_Rooms(App.Location_id);
+         Total_Rooms : Room_Id_Type;
+
+   begin
+      Total_Rooms := Dsa_Usna_Server.Get_Number_Of_Rooms(App.Location_id);
+      declare
          New_Room_Button_Array : Room_Button_Array_Type
            (1..Total_Rooms);
-   begin
+      begin
 
       Gnoga.log ("Number of Rooms to display := " &Total_Rooms'img);
       if App.Rooms_Record.Back_Button.ID = "Room Back Button" or App.Admin then
@@ -116,6 +119,11 @@ package Body Usna_Rooms_Gnoga_Pkg is
 
          end loop;
       App.Room_Change := false;
+   exception
+      when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
+
+
+      end;
 
    exception
       when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));

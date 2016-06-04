@@ -1,8 +1,0 @@
-with "pcs_project1";
-project pcs_project is
-   for Object_Dir use "obj";
-   for Source_Dirs use ("/home/tony/ada/gnat/include/polyorb");
-   for Source_Files use
-     ("polyorb-dsa_p-partitions.ads",
-      "polyorb-dsa_p-partitions.adb");
-end pcs_project;
