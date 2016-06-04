@@ -32,7 +32,7 @@ package body  Pi_Cube_Client_Pkg is
    package Device_Data_Fifo_Po is new Special_Fifo_Po
      (Element_Type => Device_Data,
       Element_Discriminator_Type => Device_Type,
-     Check_Discriminator =>  Check_Device_Data_Discriminant);
+      Check_Discriminator =>  Check_Device_Data_Discriminant);
 
    Data_Po : Device_Data_Fifo_Po.The_PO;
 
@@ -58,7 +58,7 @@ package body  Pi_Cube_Client_Pkg is
       GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.Data_Received
         (Client => GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client(Client),
          Data   => Data);
-     Data_Po.Push(Element => Data);
+      Data_Po.Push(Element => Data);
 
 
 
@@ -110,15 +110,22 @@ package body  Pi_Cube_Client_Pkg is
                   else
                      Gnoga.log("Invalid Message sent for Room Name : "& Room_Name & " with ID :" & Room'img);
                   end if;
+               exception
+                  when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
                end;
             else
                delay 0.2;
 
             end if;
+         exception
+            when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
          end;
 
       end loop;
+   exception
+      when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
    end Process_Waiting_Local_Messages_From_Cube;
 
@@ -253,7 +260,7 @@ package body  Pi_Cube_Client_Pkg is
                   -- we will check the server to see if there are messages waiting to be serviced.
 
                   -- check for messages coming in from server using alert buffer and process these
-                   while not Dsa_Usna_Server.Is_Empty(Location) loop
+                  while not Dsa_Usna_Server.Is_Empty(Location) loop
                      declare
                         TC : TC_Change_Record;
 
