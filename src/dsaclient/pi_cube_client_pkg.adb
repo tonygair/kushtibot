@@ -173,11 +173,13 @@ package body  Pi_Cube_Client_Pkg is
                   Roomname => Roomname,
                   Data     => Get_Device_Data(Client => Client,
                                               Index  => count));
+               Gnoga.log ("Refreshed Roomname : " & Roomname & " with Room id " & Room'img);
 
             exception
                when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
             end;
-
+         else
+            Gnoga.log(" Device Number " & count'img & " does not need updating ");
          end if;
       end loop;
 
