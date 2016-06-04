@@ -58,14 +58,9 @@ package body  Pi_Cube_Client_Pkg is
 
 
    begin
-      GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.Data_Received
-        (Client => GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client(Client),
-         Data   => Data);
+
       Data_Po.Push(Element => Data);
-
-
-
-      Gnoga.log(Data.Kind_Of'img & " Added data to internal Data_Po");
+--      Gnoga.log(Data.Kind_Of'img & " Added data to internal Data_Po");
    exception
       when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
