@@ -22,10 +22,11 @@ package Special_Fifo_Po is
 
        function Is_Empty  return Boolean;
 
+      function Messages_Waiting return Natural;
 
    private
       The_List : Element_Fifo.Fifo_Type;
-      View_In_Progress : boolean := false;
+      Message_Number : Natural := 0;
    end The_PO;
 
 

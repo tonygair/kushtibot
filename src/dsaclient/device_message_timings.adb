@@ -1,4 +1,5 @@
 with Gnoga;
+with Ada.Exceptions;
 package body Device_Message_Timings is
 
 
@@ -19,6 +20,9 @@ package body Device_Message_Timings is
 
          Gnoga.log("Device_Message_Timings-Strange Device Number " & Device_Number'img);
          end if;
+                    exception
+               when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
       end Register_An_Update;
 
 
@@ -29,6 +33,9 @@ package body Device_Message_Timings is
          Gnoga.log("Message Device Timings - Updated Delay from " & How_Long_Delay'img
                     & " to :- " & How_Long'img);
          How_Long_Delay := How_Long;
+                    exception
+               when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
       end Set_Update_Time;
 
 
@@ -43,6 +50,10 @@ package body Device_Message_Timings is
             Return_Value := true;
          end if;
          return Return_Value;
+                    exception
+               when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+            return false;
+
       end Ripe_For_Update;
 
 

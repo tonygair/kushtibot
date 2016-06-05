@@ -60,7 +60,7 @@ package body  Pi_Cube_Client_Pkg is
    begin
 
       Data_Po.Push(Element => Data);
---      Gnoga.log(Data.Kind_Of'img & " Added data to internal Data_Po");
+      --      Gnoga.log(Data.Kind_Of'img & " Added data to internal Data_Po");
    exception
       when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
 
@@ -153,22 +153,32 @@ package body  Pi_Cube_Client_Pkg is
        Max_Device_Number : in positive ) is
 
    begin
+      gnoga.log(" Number of messages sent so far is := " & Data_Po.Messages_Waiting'img );
+
       for count in 1..Max_Device_Number loop
          if Last_Device_Update.Ripe_For_Update(count) then
             declare
                Room :  Room_ID := Get_Room_ID
                  (Client => Client,
                   Index  => count);
-               Roomname : string := Get_Room_Name
-                 (Client => Client,
-                  ID     => Room);
             begin
-               Pi_Data.Process_Data
-                 (Room     => Room ,
-                  Roomname => Roomname,
-                  Data     => Get_Device_Data(Client => Client,
-                                              Index  => count));
-               Gnoga.log ("Refreshed Roomname : " & Roomname & " with Room id " & Room'img);
+               if Room  > 0 then
+                  declare
+                     Roomname : string := Get_Room_Name
+                       (Client => Client,
+                        ID     => Room);
+                  begin
+                     Pi_Data.Process_Data
+                       (Room     => Room ,
+                        Roomname => Roomname,
+                        Data     => Get_Device_Data(Client => Client,
+                                                    Index  => count));
+                     Gnoga.log ("Refreshed Roomname : " & Roomname & " with Room id " & Room'img);
+
+                  exception
+                     when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+                  end;
+               end if;
 
             exception
                when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
