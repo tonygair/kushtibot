@@ -148,6 +148,9 @@ package body  Pi_Second_Cube_Client_Pkg is
 --
 --     end Disconnected;
 
+
+
+
    procedure Refresh_Tardy_Devices
      ( Client : in out GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client;
        Max_Device_Number : in positive ) is
@@ -177,7 +180,11 @@ package body  Pi_Second_Cube_Client_Pkg is
 
                   exception
                      when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
                   end;
+               else
+                  Gnoga.log("Zero Room ID found for device number " & count'img);
+
                end if;
 
             exception
@@ -261,6 +268,7 @@ package body  Pi_Second_Cube_Client_Pkg is
             Message_Ready_For_Room : boolean := false;
             Last_Query_Done : Ada.Calendar.time := Ada.Calendar.Clock;
             --Rir_Array : Rir_Array_Type(1..Room_Id(Number_Of_Rooms));
+
          begin
             Gnoga.log( "Number of Rooms " & Number_Of_Rooms'img & "in location " );
             Gnoga.log( "Number_Of_Devices" & Number_Of_Devices'img);
