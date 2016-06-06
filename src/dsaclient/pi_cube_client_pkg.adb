@@ -56,9 +56,15 @@ package body  Pi_Cube_Client_Pkg is
       -- Device : Positive := Get_Device (Client => Client,
       --                                  Address => Data.Address);
 
-
+      Room :  Room_ID := Get_Device_Room
+                 (Client => Client,
+                  Address => Data.Address );
+      Serial_No : String := Get_Device_Serial_No
+        (Client => Client,
+         Address => Data.Address);
    begin
-
+      Gnoga.log ("serial no : " & Serial_No & " Device_Type " & Data.Kind_Of'img
+                 & " in room_id " & Room'img);
       Data_Po.Push(Element => Data);
       --      Gnoga.log(Data.Kind_Of'img & " Added data to internal Data_Po");
    exception

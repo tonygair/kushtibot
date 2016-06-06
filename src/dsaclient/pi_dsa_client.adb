@@ -4,7 +4,7 @@ with Gnat.Sockets;
 
 with GNAT.Sockets.Server;          use GNAT.Sockets.Server;
 with GNAT.Sockets.Server.Handles;  use GNAT.Sockets.Server.Handles;
-with Pi_Second_Cube_Client_Pkg;
+with Pi_Cube_Client_Pkg;
 with GNAT.Sockets.Connection_State_Machine.
   ELV_MAX_Cube_Client.Stream_IO;
 with GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client;
@@ -25,7 +25,7 @@ procedure Pi_Dsa_Client is
    Location_Id : Location_Id_Type;
    Cube_Serial_Number : Serial_Type;
    Cube_Address : Gnat.Sockets.Inet_Addr_Type;
-   Pi_Access : Pi_Second_Cube_Client_Pkg.Pi_Access_Type;
+   Pi_Access : Pi_Cube_Client_Pkg.Pi_Access_Type;
 
 begin
   -- Gnoga.log("starting Pi App");
@@ -44,7 +44,7 @@ begin
          Pi_Data.Set_Location_Id(Location_Id);
 
 
-   Pi_Access := new Pi_Second_Cube_Client_Pkg.Pi_Comms_Thread;
+   Pi_Access := new Pi_Cube_Client_Pkg.Pi_Comms_Thread;
    Pi_Access.Start_Thread
      (Location_Id => Location_Id,
       Cube => GNAT.Sockets.Image (Cubes (Cubes'First).Address));
