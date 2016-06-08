@@ -270,7 +270,8 @@ package body  Pi_Cube_Client_Pkg is
       Location : Location_Id_Type;
       Loop_Number : integer := 1; -- this is for doing one loop of sending every 20 checks of the buffers
       Delay_Count : Natural := 0;
-
+      type String_Access is access string;
+      String_Ptr : String_Access;
    begin
             Trace_On
               (  Factory  => Factory,
@@ -294,15 +295,17 @@ package body  Pi_Cube_Client_Pkg is
                               Cube : in String)  do
 
             Location := Location_Id;
-            Connect
-              (  Server,
-                 Client'Unchecked_Access,
-                 Cube,
-                 ELV_MAX_Cube_Port
-                );
-            Gnoga.log("Post rendezvous");
-         end Start_Thread;
+            String_Ptr := new String' (Cube);
 
+
+         end Start_Thread;
+          Gnoga.log("Post rendezvous");
+         Connect
+           (  Server,
+              Client'Unchecked_Access,
+              String_Ptr.all,
+              ELV_MAX_Cube_Port
+             );
          while not Is_Connected (Client) loop -- Busy waiting
             delay Timeout_Delay;
          end loop;
