@@ -230,7 +230,7 @@ package body  Pi_Cube_Client_Pkg is
         (  Reference,
            new Adjusted_Cube_Client
              (  Listener    => Server'Unchecked_Access,
-                Line_Length => 4096,
+                Line_Length => 1024,
                 Input_Size  => 80,
                 Output_Size => 200
                )      );
@@ -255,6 +255,7 @@ package body  Pi_Cube_Client_Pkg is
          while not Is_Connected (Client) loop -- Busy waiting
             delay Timeout_Delay;
          end loop;
+
          while not Dsa_Usna_Server.Is_Database_Ready loop
             Delay_Count := Delay_Count + 1;
             if Delay_Count=10 then
