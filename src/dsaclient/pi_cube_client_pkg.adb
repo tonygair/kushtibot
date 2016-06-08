@@ -72,6 +72,8 @@ package body  Pi_Cube_Client_Pkg is
          Data   => Data);
       if Room > 0 then
          Gnoga.log(Get_Room_Name(Client => Client,ID => Room));
+      else
+         Gnoga.log("Whole House Device found - Zero Room Id");
       end if;
 
 

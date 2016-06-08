@@ -1,4 +1,7 @@
 with Ada.Unchecked_Deallocation;
+with Gnoga;
+with Ada.Exceptions;
+
 
 package body Fifo is
 
@@ -14,20 +17,26 @@ package body Fifo is
          List.Tail := Temp;
       end if;
       if List.Head /= null then
-        List.Head.Next := Temp;
+         List.Head.Next := Temp;
       end if;
       List.Head := Temp;
+   exception
+      when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
    end Push;
 
    --------
    -- peek --
    ------------
    function Peek (List : in Fifo_Type) return Element_Type is
-      begin
+   begin
       if List.Head = null or List.Tail.Value = null then
          raise Empty_Error;
       end if;
       Return List.Tail.Value.all;
+   exception
+      when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
    end Peek;
 
    ---------
@@ -49,6 +58,9 @@ package body Fifo is
       end if;
       Free_EP (Temp.Value);
       Free_FP (Temp);
+   exception
+      when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
    end Pop;
 
    --------------
@@ -58,6 +70,9 @@ package body Fifo is
    function Is_Empty (List : Fifo_Type) return Boolean is
    begin
       return List.Head = null;
+   exception
+      when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
    end Is_Empty;
 
 end Fifo;

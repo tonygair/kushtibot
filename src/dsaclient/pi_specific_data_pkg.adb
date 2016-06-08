@@ -14,9 +14,9 @@ package body Pi_Specific_Data_Pkg is
      (Object => Room_Information_Record,
       Name => RIR_Access);
 
---     procedure Deallocate_RIR_Array is new Ada.Unchecked_Deallocation
---       (Object => Room_Array_Type,
---        Name => Room_Array_Access);
+   --     procedure Deallocate_RIR_Array is new Ada.Unchecked_Deallocation
+   --       (Object => Room_Array_Type,
+   --        Name => Room_Array_Access);
 
    procedure Deallocate_RBA is new Ada.Unchecked_Deallocation
      (Object => Room_Boolean_Array_Type,
@@ -33,7 +33,7 @@ package body Pi_Specific_Data_Pkg is
                Deallocate_RIR (Room_Array(count));
             end if;
          end loop;
-        RBA := (others => false);
+         RBA := (others => false);
          Messages_Per_Room := (others => 0);
 
       exception
@@ -55,6 +55,9 @@ package body Pi_Specific_Data_Pkg is
       procedure Set_Location_Id ( Location : in Location_Id_Type) is
       begin
          My_Location_Id := Location;
+           exception
+         when E : others =>Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
       end Set_Location_Id;
 
 
@@ -80,7 +83,11 @@ package body Pi_Specific_Data_Pkg is
                   Room_Name => Roomname);
 
             begin
+
                Room_Array(Room) := new Room_Information_Record'(RIR);
+            exception
+               when E : others =>Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
             end;
          end if;
 
@@ -104,7 +111,7 @@ package body Pi_Specific_Data_Pkg is
 
 
          RBA(Room) := true;
-       Messages_Per_Room(Room) := Messages_Per_Room(Room) + 1;
+         Messages_Per_Room(Room) := Messages_Per_Room(Room) + 1;
 
       exception
          when E : others =>Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
@@ -115,7 +122,7 @@ package body Pi_Specific_Data_Pkg is
       procedure Room_Data_Ready
         (Room: in Room_Id;
          Device_Count : in natural;
-        Ready : out boolean) is
+         Ready : out boolean) is
          Return_Value : Boolean;
       begin
          Gnoga.log(" Room id : " & Room'img & " Device_Count " & Device_Count'img
@@ -153,6 +160,9 @@ package body Pi_Specific_Data_Pkg is
                  Room_Array( Room).all;
             begin
                return Return_Value;
+            exception
+               when E : others =>Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
             end;
          end if;
 
