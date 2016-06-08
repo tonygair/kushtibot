@@ -36,21 +36,21 @@ package body  Pi_Cube_Client_Pkg is
    end Check_Device_Data_Discriminant;
 
 
-   package Device_Data_Fifo_Po is new Special_Fifo_Po
-     (Element_Type => Device_Data,
-      Element_Discriminator_Type => Device_Type,
-      Check_Discriminator =>  Check_Device_Data_Discriminant);
+--     package Device_Data_Fifo_Po is new Special_Fifo_Po
+--       (Element_Type => Device_Data,
+--        Element_Discriminator_Type => Device_Type,
+--        Check_Discriminator =>  Check_Device_Data_Discriminant);
 
    --Data_Po : Device_Data_Fifo_Po.The_PO;
 
-   type Adjusted_Cube_Client is new GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client
-   with null record;
+--     type Adjusted_Cube_Client is new GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client
+--     with null record;
 
 --     overriding
 --     procedure Data_Received (Client : in out Adjusted_Cube_Client ;
 --                              Data   :  Device_Data);
-   Overriding
-   procedure Disconnected (Client : in out Adjusted_Cube_Client);
+--     Overriding
+--     procedure Disconnected (Client : in out Adjusted_Cube_Client);
 
 
 --     procedure Data_Received (Client : in out Adjusted_Cube_Client ;
@@ -90,7 +90,7 @@ package body  Pi_Cube_Client_Pkg is
 
 --   type Dd_Access is access Device_Data;
 
-   procedure Fetch_Data_And_Process ( Client : in out Adjusted_Cube_Client) is
+   procedure Fetch_Data_And_Process ( Client : in out ELV_MAX_Cube_Client) is
 
    begin
 
@@ -139,7 +139,7 @@ package body  Pi_Cube_Client_Pkg is
 
 
 --     procedure Process_Waiting_Local_Messages_From_Cube
---       (Client : in out Adjusted_Cube_Client) is
+--       (Client : in out GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client) is
 --
 --
 --
@@ -204,7 +204,7 @@ package body  Pi_Cube_Client_Pkg is
 --
 --     end Process_Waiting_Local_Messages_From_Cube;
 
-   procedure Disconnected (Client : in out Adjusted_Cube_Client) is
+   procedure Disconnected (Client : in out ELV_MAX_Cube_Client) is
    begin
 
       GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.Disconnected
@@ -219,7 +219,7 @@ package body  Pi_Cube_Client_Pkg is
    end Disconnected;
 
 --     procedure Refresh_Tardy_Devices
---       ( Client : in out Adjusted_Cube_Client;
+--       ( Client : in out GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client;
 --         Max_Device_Number : in positive ) is
 --
 --     begin
@@ -279,15 +279,15 @@ package body  Pi_Cube_Client_Pkg is
                 );
       Set
         (  Reference,
-           new Adjusted_Cube_Client
+           new ELV_MAX_Cube_Client
              (  Listener    => Server'Unchecked_Access,
                 Line_Length => 1024,
                 Input_Size  => 80,
                 Output_Size => 200
                )      );
       declare
-         Client : Adjusted_Cube_Client renames
-           Adjusted_Cube_Client (Ptr (Reference).all);
+         Client : ELV_MAX_Cube_Client renames
+           ELV_MAX_Cube_Client (Ptr (Reference).all);
       begin
          Gnoga.log("Start of task - before rendezvous");
          accept  Start_Thread(Location_Id : in Location_Id_Type;
