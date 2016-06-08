@@ -269,7 +269,16 @@ package body  Pi_Cube_Client_Pkg is
             --Rir_Array : Rir_Array_Type(1..Room_Id(Number_Of_Rooms));
          begin
             Gnoga.log( "Number of Rooms " & Number_Of_Rooms'img & "in location " );
-            Gnoga.log( "Number_Of_Devices" & Number_Of_Devices'img);
+            Gnoga.log( "Total Number_Of_Devices" & Number_Of_Devices'img);
+            for Room_Count in 1..Room_ID(Number_Of_Rooms) loop
+               Gnoga.log ("There are " & Get_Number_Of_Devices
+                          (Client => Client,
+                           ID     => Room_Count)'img & " in room " &
+                            Get_Room_Name (Client => Client,
+                                           ID =>  Room_Count));
+
+            end loop;
+
             Dsa_Usna_Server.Set_number_Of_Rooms
               (Location => Location,
                Rooms    => Room_Id_Type(Number_Of_Rooms));
