@@ -24,7 +24,11 @@ package body  Pi_Cube_Client_Pkg is
 
    Terminate_The_Task : boolean := false;
 
-
+    Blank_Adatime : constant Ada.Calendar.Time :=
+     Ada.calendar.Time_Of
+     (Year => 1969,
+      Month => 12,
+      Day => 14);
 
    function Check_Device_Data_Discriminant ( Element : in Device_Data) return Device_Type is
    begin
@@ -114,6 +118,12 @@ package body  Pi_Cube_Client_Pkg is
             else
                Gnoga.log ("serial no : " & Serial_No & " Device_Type " &The_Device_Type'img
                           & " is whole house device" );
+                Pi_Data.Process_Data
+                 (Room     => Room,
+                  Roomname => "Household",
+                  Data     => Get_Device_Data
+                    (Client => Client,
+                     Index  => Device_Count));
          end if;
            exception
             when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
@@ -320,7 +330,7 @@ package body  Pi_Cube_Client_Pkg is
             Number_Of_Rooms : Natural := Get_Number_Of_Rooms (Client);
             Number_Of_Devices : Natural;
             Message_Ready_For_Room : boolean := false;
-            Last_Query_Done : Ada.Calendar.time := Ada.Calendar.Clock;
+            Last_Query_Done : Ada.Calendar.time :=  Blank_Adatime ;
             --Rir_Array : Rir_Array_Type(1..Room_Id(Number_Of_Rooms));
          begin
 
@@ -328,7 +338,7 @@ package body  Pi_Cube_Client_Pkg is
             Dsa_Usna_Server.Set_number_Of_Rooms
               (Location => Location,
                Rooms    => Room_Id_Type(Number_Of_Rooms));
-
+            Query_Devices (Client);
 
 
             delay Timeout_Delay;
@@ -338,8 +348,9 @@ package body  Pi_Cube_Client_Pkg is
                   exit;
                elsif  (Last_Query_Done +  Time_Between_Querys) < Ada.Calendar.Clock then
                   Last_Query_Done := Ada.Calendar.Clock;
-                  Fetch_Data_And_Process(Client => Client);
+                  Query_Devices (Client);
                   delay 50.0;
+                  Fetch_Data_And_Process(Client => Client);
                   gnoga.log("Querying Devices Request Made ");
 
 
