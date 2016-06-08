@@ -63,8 +63,18 @@ package body  Pi_Cube_Client_Pkg is
         (Client => Client,
          Address => Data.Address);
    begin
+
       Gnoga.log ("serial no : " & Serial_No & " Device_Type " & Data.Kind_Of'img
                  & " in room_id " & Room'img);
+      GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.Data_Received
+        (Client => GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client
+         (Client),
+         Data   => Data);
+      if Room > 0 then
+         Gnoga.log(Get_Room_Name(Client => Client,ID => Room));
+      end if;
+
+
       Data_Po.Push(Element => Data);
       --      Gnoga.log(Data.Kind_Of'img & " Added data to internal Data_Po");
    exception
@@ -209,11 +219,11 @@ package body  Pi_Cube_Client_Pkg is
       Delay_Count : Natural := 0;
 
    begin
-      --        Trace_On
-      --          (  Factory  => Factory,
-      --             Received => GNAT.Sockets.Server.Trace_Decoded,
-      --             Sent     => GNAT.Sockets.Server.Trace_Decoded
-      --            );
+            Trace_On
+              (  Factory  => Factory,
+                 Received => GNAT.Sockets.Server.Trace_Decoded,
+                 Sent     => GNAT.Sockets.Server.Trace_Decoded
+                );
       Set
         (  Reference,
            new Adjusted_Cube_Client
