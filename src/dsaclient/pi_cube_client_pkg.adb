@@ -86,6 +86,42 @@ package body  Pi_Cube_Client_Pkg is
 
    type Dd_Access is access Device_Data;
 
+   procedure Examine_And_List_All ( Client : in out Adjusted_Cube_Client) is
+
+   begin
+
+
+      for Device_Count in 1..Get_Number_Of_Devices(Client => Client) loop
+         declare
+            Room :  Room_ID := Get_Device_Room
+              (Client => Client,
+               Index => Device_Count );
+            Serial_No : String := Get_Device_Serial_No
+              (Client => Client,
+               Index => Device_Count );
+            The_Device_Type : Device_Type := Get_Device_Type(Client => Client,
+                                                             Index  => Device_Count);
+         begin
+            if Room > 0 then
+               Gnoga.log ("serial no : " & Serial_No & " Device_Type " & The_Device_Type'img
+                          & " in room_id " & Room'img  & " which is room " & Get_Room_Name(Client => Client,ID => Room));
+            else
+               Gnoga.log ("serial no : " & Serial_No & " Device_Type " &The_Device_Type'img
+                          & " is whole house device" );
+         end if;
+           exception
+            when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+         end;
+
+            end loop;
+
+      exception
+         when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
+      end Examine_And_List_All;
+
+
+
    procedure Process_Waiting_Local_Messages_From_Cube
      (Client : in out Adjusted_Cube_Client) is
 
@@ -267,6 +303,8 @@ package body  Pi_Cube_Client_Pkg is
 
             delay 1.0;
          end loop;
+
+         Examine_And_List_All(Client => Client);
 
          Dsa_Usna_Server.Register_Pi
            (Terminal => Terminal.My_Terminal'access,
