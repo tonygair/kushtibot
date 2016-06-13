@@ -3,6 +3,7 @@ with Ada.Unchecked_Deallocation;
 with Ada.Exceptions;
 --with Dsa_Usna_Server;
 with Gnoga;
+with Ada.Calendar.Formatting; use Ada.Calendar.Formatting;
 package body Pi_Specific_Data_Pkg is
 
 
@@ -135,12 +136,18 @@ package body Pi_Specific_Data_Pkg is
          Room_Array(Room).Error_In_Room := Data.Error or Room_Array(Room).Error_In_Room;
          Room_Array(Room).Link_Error := Data.Link_Error or Room_Array(Room).Link_Error;
          --Room_Array.all(Room).Battery_Low := Data.Battery_Low ;
-
+         Gnoga.log(Data.Kind_Of'img & " in room " & Roomname );
          case Data.Kind_Of is
-            when  Radiator_Thermostat .. Wall_Thermostat =>
+            when  Radiator_Thermostat .. Radiator_Thermostat_Plus =>
+               Room_Array(Room).Actual :=
+                 C_Centigrade(Data.Latest_Temperature);
+               Gnoga.log(Data.Kind_Of'img &  " has temp " & Data.Latest_Temperature'img & " delivered at "&
+                          Ada.Calendar.Formatting.Image(Data.Received_At));
+
+            when Wall_Thermostat =>
                Room_Array(Room).Actual :=
                  C_Centigrade(Data.Temperature);
-
+               Gnoga.log(Data.Kind_Of'img &  " has temp " & Data.Temperature'img );
 
             when others =>
                null;

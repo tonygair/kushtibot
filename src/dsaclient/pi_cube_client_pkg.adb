@@ -226,11 +226,11 @@ Data_Po : Device_Data_Fifo_Po.The_PO;
       type String_Access is access string;
       String_Ptr : String_Access;
    begin
-            Trace_On
-              (  Factory  => Factory,
-                 Received => GNAT.Sockets.Server.Trace_Decoded,
-                 Sent     => GNAT.Sockets.Server.Trace_Decoded
-                );
+--              Trace_On
+--                (  Factory  => Factory,
+--                   Received => GNAT.Sockets.Server.Trace_Decoded,
+--                   Sent     => GNAT.Sockets.Server.Trace_Decoded
+--                  );
       Set
         (  Reference,
            new Adjusted_Cube_Client
@@ -296,8 +296,6 @@ Data_Po : Device_Data_Fifo_Po.The_PO;
                Rooms    => Room_Id_Type(Number_Of_Rooms));
             Build_Room_Picture(Client=> Client);
 
-            Query_Devices (Client);
-
 
             delay Timeout_Delay;
 
@@ -313,12 +311,10 @@ Data_Po : Device_Data_Fifo_Po.The_PO;
 
 
                else
-                 -- Process_Waiting_Local_Messages_From_Cube(Client => Client);
+                  Process_Waiting_Local_Messages_From_Cube(Client => Client);
                   -- first check outgoing data to decide if theres any to send
                   For room_count in Room_ID(1) .. Room_Id(Number_Of_Rooms) loop
-                     Number_Of_Devices := Get_Number_Of_Devices
-                       (Client => Client,
-                        ID     => room_count);
+
                      -- check to see if room data is ready
                      -- we send a message if all devices have received
                      Pi_Data.Room_Data_Ready(Room         => room_count,
