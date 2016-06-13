@@ -85,7 +85,7 @@ package body Pi_Specific_Data_Pkg is
                Room_Name => Roomname);
 
       begin
-         if Room_Array (Room) /= null then
+         if Room_Array (Room) = null then
             if Room = 0 then
                Room_Array(0) := new Room_Information_Record'(House_RIR);
             else
