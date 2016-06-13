@@ -60,8 +60,69 @@ package body Pi_Specific_Data_Pkg is
 
       end Set_Location_Id;
 
+      procedure Set_Room_Name (Room : in Room_Id;
+                                Roomname : String) is
+          House_RIR : Room_Information_Record :=
+           (Roomname_Length => Whole_House_Description'length,
+            Location => My_Location_id,
+            Room => 0,
+            Set_Point => 0.0,
+            Actual => 0.0,
+            Error_In_Room => false,
+            Link_Error => false,
+            Battery_Low => false,
+            Room_Name =>Whole_House_Description);
+
+         Other_RIR :Room_Information_Record :=
+              (Roomname_Length => Roomname'length,
+               Location =>  My_Location_Id,
+               Room => Room_Id_Type(Room),
+               Set_Point => 0.0,
+               Actual => 0.0,
+               Error_In_Room => false,
+               Link_Error => false,
+               Battery_Low => false,
+               Room_Name => Roomname);
+
+      begin
+         if Room_Array (Room) /= null then
+            if Room = 0 then
+               Room_Array(0) := new Room_Information_Record'(House_RIR);
+            else
+               Room_Array(Room) := new Room_Information_Record'(Other_RIR);
+            end if;
+         else
+            Gnoga.log (" Room pointer should be null ");
+            raise Program_Error;
+         end if;
+           exception
+               when E : others =>Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+      end Set_Room_Name;
 
 
+
+
+      procedure Process_Parameters
+        (Device_P : in Device_Parameters) is
+         Room : Room_ID := Device_P.Room;
+
+      begin
+        if Room_Array(Room) = null then
+            raise Program_Error;
+         end if;
+         if Device_P.Room > 0 then
+            case Device_P.Kind_Of is
+               when Radiator_Thermostat..Wall_Thermostat =>
+                  Room_Array(Room).Set_Point := C_Centigrade(Device_P.Comfort);
+               when others =>
+                  null;
+            end case;
+         end if;
+
+
+      exception
+         when E : others =>Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+      end Process_Parameters;
 
       procedure Process_Data
         (Room : in Room_Id;
@@ -69,38 +130,14 @@ package body Pi_Specific_Data_Pkg is
          Data : in Device_Data) is
       begin
 
-         if Room_Array(Room) = null then
-            declare
-               RIR : Room_Information_Record :=
-                 (Roomname_Length => Roomname'length,
-                  Location =>  1,
-                  Room => Room_Id_Type(Room),
-                  Set_Point => 18.0,
-                  Actual => 18.0,
-                  Error_In_Room => false,
-                  Link_Error => false,
-                  Battery_Low => false,
-                  Room_Name => Roomname);
 
-            begin
-
-               Room_Array(Room) := new Room_Information_Record'(RIR);
-            exception
-               when E : others =>Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
-
-            end;
-         end if;
-
+         Room_Array(Room).Battery_Low := Data.Battery_Low or Room_Array(Room).Battery_Low;
          Room_Array(Room).Error_In_Room := Data.Error or Room_Array(Room).Error_In_Room;
          Room_Array(Room).Link_Error := Data.Link_Error or Room_Array(Room).Link_Error;
          --Room_Array.all(Room).Battery_Low := Data.Battery_Low ;
 
          case Data.Kind_Of is
-            when  Radiator_Thermostat | Radiator_Thermostat_Plus =>
-
-               Room_Array(Room).Set_Point :=
-                 C_Centigrade(Data.Set_Temperature);
-            when Wall_Thermostat =>
+            when  Radiator_Thermostat .. Wall_Thermostat =>
                Room_Array(Room).Actual :=
                  C_Centigrade(Data.Temperature);
 
@@ -108,8 +145,6 @@ package body Pi_Specific_Data_Pkg is
             when others =>
                null;
          end case;
-
-
          RBA(Room) := true;
          Messages_Per_Room(Room) := Messages_Per_Room(Room) + 1;
 
@@ -121,22 +156,12 @@ package body Pi_Specific_Data_Pkg is
 
       procedure Room_Data_Ready
         (Room: in Room_Id;
-         Device_Count : in natural;
          Ready : out boolean) is
-         Return_Value : Boolean;
+
       begin
-         Gnoga.log(" Room id : " & Room'img & " Device_Count " & Device_Count'img
-                   & " RBA(Room) " & RBA(Room)'img
+         Gnoga.log(" Room id : " & Room'img & " RBA(Room) " & RBA(Room)'img
                    & " Messages Per Room " & Messages_Per_Room(Room)'img);
-         if not RBA(Room) or Device_Count = 0 or Room = 0 then
-            Return_Value := false;
-         elsif Messages_Per_Room(Room) = 0 then
-            Return_Value := false;
-         elsif RBA(Room) and (Messages_Per_Room (Room) >=  Device_Count) then
-            Messages_Per_Room (Room) := 0;
-            Return_Value := true;
-         end if;
-         Ready := Return_Value;
+         Ready :=   RBA(Room);
 
       exception
          when E : others => Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
@@ -162,7 +187,7 @@ package body Pi_Specific_Data_Pkg is
                return Return_Value;
             exception
                when E : others =>Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));
-
+               return Blank_RIR;
             end;
          end if;
 

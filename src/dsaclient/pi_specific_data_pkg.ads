@@ -4,6 +4,9 @@ with Gnat.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client;
 
 package Pi_Specific_Data_Pkg is
 
+
+   Whole_House_Description : constant String := "Whole House";
+
    type RIR_Access is access Room_Information_Record;
 
 
@@ -27,7 +30,11 @@ package Pi_Specific_Data_Pkg is
 
       procedure Set_Location_Id ( Location : in Location_Id_Type);
 
+      procedure Set_Room_Name (Room : in Room_Id;
+                               Roomname : String);
 
+      procedure Process_Parameters
+        (Device_P : in Device_Parameters);
 
       procedure Process_Data
         (Room : in Room_Id;
@@ -36,8 +43,7 @@ package Pi_Specific_Data_Pkg is
 
        procedure Room_Data_Ready
         (Room: in Room_Id;
-         Device_Count : in natural;
-        Ready : out boolean);
+         Ready : out boolean);
 
       function Get_Room_Information
         (Room : in Room_ID) return Room_Information_Record;

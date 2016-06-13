@@ -36,175 +36,170 @@ package body  Pi_Cube_Client_Pkg is
    end Check_Device_Data_Discriminant;
 
 
---     package Device_Data_Fifo_Po is new Special_Fifo_Po
---       (Element_Type => Device_Data,
---        Element_Discriminator_Type => Device_Type,
---        Check_Discriminator =>  Check_Device_Data_Discriminant);
+   package Device_Data_Fifo_Po is new Special_Fifo_Po
+     (Element_Type => Device_Data,
+      Element_Discriminator_Type => Device_Type,
+      Check_Discriminator =>  Check_Device_Data_Discriminant);
 
-   --Data_Po : Device_Data_Fifo_Po.The_PO;
+Data_Po : Device_Data_Fifo_Po.The_PO;
 
---     type Adjusted_Cube_Client is new GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client
---     with null record;
+   type Adjusted_Cube_Client is new GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client
+   with null record;
 
---     overriding
---     procedure Data_Received (Client : in out Adjusted_Cube_Client ;
---                              Data   :  Device_Data);
---     Overriding
---     procedure Disconnected (Client : in out Adjusted_Cube_Client);
+   overriding
+   procedure Data_Received (Client : in out Adjusted_Cube_Client ;
+                            Data   :  Device_Data);
+   Overriding
+   procedure Disconnected (Client : in out Adjusted_Cube_Client);
 
 
---     procedure Data_Received (Client : in out Adjusted_Cube_Client ;
---                              Data   :  Device_Data) is
---
---
---        -- Device : Positive := Get_Device (Client => Client,
---        --                                  Address => Data.Address);
---
---        Room :  Room_ID := Get_Device_Room
---                   (Client => Client,
---                    Address => Data.Address );
---        Serial_No : String := Get_Device_Serial_No
---          (Client => Client,
---           Address => Data.Address);
---     begin
---
---        Gnoga.log ("serial no : " & Serial_No & " Device_Type " & Data.Kind_Of'img
---                   & " in room_id " & Room'img);
---        GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.Data_Received
---          (Client => GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client
---           (Client),
---           Data   => Data);
---        if Room > 0 then
---           Gnoga.log(Get_Room_Name(Client => Client,ID => Room));
---        else
---           Gnoga.log("Whole House Device found - Zero Room Id");
---        end if;
---
---
---        Data_Po.Push(Element => Data);
---        --      Gnoga.log(Data.Kind_Of'img & " Added data to internal Data_Po");
---     exception
---        when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
---
---     end Data_Received;
+   procedure Data_Received (Client : in out Adjusted_Cube_Client ;
+                            Data   :  Device_Data) is
 
---   type Dd_Access is access Device_Data;
 
-   procedure Fetch_Data_And_Process ( Client : in out ELV_MAX_Cube_Client) is
+      -- Device : Positive := Get_Device (Client => Client,
+      --                                  Address => Data.Address);
 
+      Room :  Room_ID := Get_Device_Room
+                 (Client => Client,
+                  Address => Data.Address );
+      Serial_No : String := Get_Device_Serial_No
+        (Client => Client,
+         Address => Data.Address);
    begin
 
+      Gnoga.log ("serial no : " & Serial_No & " Device_Type " & Data.Kind_Of'img
+                 & " in room_id " & Room'img);
+      GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.Data_Received
+        (Client =>  GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.ELV_MAX_Cube_Client (Client),
+         Data   => Data);
+      if Room > 0 then
+         Gnoga.log(Get_Room_Name(Client => Client,ID => Room));
+      else
+         Gnoga.log("Whole House Device found - Zero Room Id");
+      end if;
 
-      for Device_Count in 1..Get_Number_Of_Devices(Client => Client) loop
+
+      Data_Po.Push(Element => Data);
+      --      Gnoga.log(Data.Kind_Of'img & " Added data to internal Data_Po");
+   exception
+      when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
+   end Data_Received;
+
+ type Dd_Access is access Device_Data;
+
+
+   procedure Build_Room_Picture (Client : in out Adjusted_Cube_Client) is
+
+
+   begin
+      -- set the room names
+      Pi_Data.Set_Room_Name(Room => 0, Roomname => "");
+      for count in Room_ID(1)..Room_ID(Client.Get_Number_Of_Rooms) loop
+            Pi_Data.Set_Room_Name
+              (Room => count,
+               Roomname => Client.Get_Room_Name(ID => count));
+
+      end loop;
+
+          --process the device parameters
+      for count in 1 .. Client.Get_Number_Of_Devices loop
          declare
-            Room :  Room_ID := Get_Device_Room
-              (Client => Client,
-               Index => Device_Count );
-            Serial_No : String := Get_Device_Serial_No
-              (Client => Client,
-               Index => Device_Count );
-            The_Device_Type : Device_Type := Get_Device_Type(Client => Client,
-                                                             Index  => Device_Count);
+            Device_P : Device_Parameters := Client.Get_Device_Parameters(count);
+
          begin
-            if Room > 0 then
-               Gnoga.log ("serial no : " & Serial_No & " Device_Type " & The_Device_Type'img
-                          & " in room_id " & Room'img  & " which is room " & Get_Room_Name(Client => Client,ID => Room));
-               Pi_Data.Process_Data
-                 (Room     => Room,
-                  Roomname => Get_Room_Name(Client => Client,ID => Room) ,
-                  Data     => Get_Device_Data
-                    (Client => Client,
-                     Index  => Device_Count));
-            else
-               Gnoga.log ("serial no : " & Serial_No & " Device_Type " &The_Device_Type'img
-                          & " is whole house device" );
-                Pi_Data.Process_Data
-                 (Room     => Room,
-                  Roomname => "Household",
-                  Data     => Get_Device_Data
-                    (Client => Client,
-                     Index  => Device_Count));
-         end if;
-           exception
+            Pi_Data.Process_Parameters(Device_P => Device_P);
+
+         exception
             when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
          end;
 
-            end loop;
+      end loop;
+      for count in Room_ID(1)..Room_ID(Client.Get_Number_Of_Rooms) loop
 
-      exception
-         when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+       Dsa_Usna_Server.Submit_Room_Data
+           (Room_Data => Pi_Data.Get_Room_Information(Room => count));
+      end loop;
 
-      end Fetch_Data_And_Process;
+   exception
+      when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
+
+   end Build_Room_Picture;
 
 
 
---     procedure Process_Waiting_Local_Messages_From_Cube
---       (Client : in out GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client) is
---
---
---
---     begin
---        while not Data_Po.Is_Empty loop
---
---           declare
---              The_Data : Device_Data (Kind_Of => Data_Po.Peek_At_Discriminator) ;
---              Successful_Pop : boolean;
---           begin
---
---              Data_Po.Pop
---                (Element_Discriminator => The_Data.Kind_Of,
---                 Element => The_Data,
---                 Success => Successful_Pop);
---              if Successful_Pop then
---                 declare
---
---                    -- Device : Positive := Get_Device (Client => Client,
---                    --                                  Address => Data.Address);
---
---                    Device : Positive := Get_Device
---                      (Client  => Client,
---                       Address => The_Data.Address);
---
---                    Room : Room_ID := Get_Device_Room
---                      (Client => Client,
---                       Address => The_Data.Address);
---
---                    Room_Name : string := Get_Room_Name
---                      (Client => Client,
---                       ID     => Room);
---
---                 begin
---
---                    if Room_Name'length > 0 and  Room > 0 then
---                       Last_Device_Update.Register_An_Update(Device);
---
---                       Pi_Data.Process_Data
---                         (Room     => Room,
---                          Roomname => Room_Name,
---                          Data     => The_Data);
---                    else
---                       Gnoga.log("Invalid Message sent for Room Name : "& Room_Name & " with ID :" & Room'img);
---                    end if;
---                 exception
---                    when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
---
---                 end;
---              else
---                 delay 0.2;
---
---              end if;
---           exception
---              when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
---
---           end;
---
---        end loop;
---     exception
---        when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
---
---     end Process_Waiting_Local_Messages_From_Cube;
 
-   procedure Disconnected (Client : in out ELV_MAX_Cube_Client) is
+
+   procedure Process_Waiting_Local_Messages_From_Cube
+     (Client : in out Adjusted_Cube_Client) is
+
+
+
+   begin
+      while not Data_Po.Is_Empty loop
+
+         declare
+            The_Data : Device_Data (Kind_Of => Data_Po.Peek_At_Discriminator) ;
+            Successful_Pop : boolean;
+         begin
+
+            Data_Po.Pop
+              (Element_Discriminator => The_Data.Kind_Of,
+               Element => The_Data,
+               Success => Successful_Pop);
+            if Successful_Pop then
+               declare
+
+                  -- Device : Positive := Get_Device (Client => Client,
+                  --                                  Address => Data.Address);
+
+                  Device : Positive := Get_Device
+                    (Client  => Client,
+                     Address => The_Data.Address);
+
+                  Room : Room_ID := Get_Device_Room
+                    (Client => Client,
+                     Address => The_Data.Address);
+
+                  Room_Name : string := Get_Room_Name
+                    (Client => Client,
+                     ID     => Room);
+
+               begin
+
+                  if Room_Name'length > 0 and  Room > 0 then
+                     Last_Device_Update.Register_An_Update(Device);
+
+                     Pi_Data.Process_Data
+                       (Room     => Room,
+                        Roomname => Room_Name,
+                        Data     => The_Data);
+                  else
+                     Gnoga.log("Invalid Message sent for Room Name : "& Room_Name & " with ID :" & Room'img);
+                  end if;
+               exception
+                  when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
+               end;
+            else
+               delay 0.2;
+
+            end if;
+         exception
+            when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
+         end;
+
+      end loop;
+   exception
+      when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
+
+   end Process_Waiting_Local_Messages_From_Cube;
+
+   procedure Disconnected (Client : in out Adjusted_Cube_Client) is
    begin
 
       GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client.Disconnected
@@ -218,49 +213,7 @@ package body  Pi_Cube_Client_Pkg is
 
    end Disconnected;
 
---     procedure Refresh_Tardy_Devices
---       ( Client : in out GNAT.Sockets.Connection_State_Machine.ELV_MAX_Cube_Client;
---         Max_Device_Number : in positive ) is
---
---     begin
---
---        for count in 1..Max_Device_Number loop
---           if Last_Device_Update.Ripe_For_Update(count) then
---              declare
---                 Room :  Room_ID := Get_Room_ID
---                   (Client => Client,
---                    Index  => count);
---              begin
---                 if Room  > 0 then
---                    declare
---                       Roomname : string := Get_Room_Name
---                         (Client => Client,
---                          ID     => Room);
---                    begin
---                       Pi_Data.Process_Data
---                         (Room     => Room ,
---                          Roomname => Roomname,
---                          Data     => Get_Device_Data(Client => Client,
---                                                      Index  => count));
---                       Gnoga.log ("Refreshed Roomname : " & Roomname & " with Room id " & Room'img);
---
---                    exception
---                       when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
---                    end;
---                 end if;
---
---              exception
---                 when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
---              end;
---           else
---              Gnoga.log(" Device Number " & count'img & " does not need updating ");
---           end if;
---        end loop;
---
---     exception
---        when E : others =>  Gnoga.log("EXCEPTION" & Ada.Exceptions.Exception_Information (E));
---
---     end Refresh_Tardy_Devices;
+
 
 
    Task body Pi_Comms_Thread  is
@@ -280,15 +233,15 @@ package body  Pi_Cube_Client_Pkg is
                 );
       Set
         (  Reference,
-           new ELV_MAX_Cube_Client
+           new Adjusted_Cube_Client
              (  Listener    => Server'Unchecked_Access,
                 Line_Length => 1024,
                 Input_Size  => 80,
                 Output_Size => 200
                )      );
       declare
-         Client : ELV_MAX_Cube_Client renames
-           ELV_MAX_Cube_Client (Ptr (Reference).all);
+         Client : Adjusted_Cube_Client renames
+           Adjusted_Cube_Client (Ptr (Reference).all);
       begin
          Gnoga.log("Start of task - before rendezvous");
          accept  Start_Thread(Location_Id : in Location_Id_Type;
@@ -341,6 +294,8 @@ package body  Pi_Cube_Client_Pkg is
             Dsa_Usna_Server.Set_number_Of_Rooms
               (Location => Location,
                Rooms    => Room_Id_Type(Number_Of_Rooms));
+            Build_Room_Picture(Client=> Client);
+
             Query_Devices (Client);
 
 
@@ -353,7 +308,7 @@ package body  Pi_Cube_Client_Pkg is
                   Last_Query_Done := Ada.Calendar.Clock;
                   Query_Devices (Client);
                   delay 50.0;
-                  Fetch_Data_And_Process(Client => Client);
+              --    Fetch_Data_And_Process(Client => Client);
                   gnoga.log("Querying Devices Request Made ");
 
 
@@ -367,7 +322,6 @@ package body  Pi_Cube_Client_Pkg is
                      -- check to see if room data is ready
                      -- we send a message if all devices have received
                      Pi_Data.Room_Data_Ready(Room         => room_count,
-                                             Device_Count => Number_Of_Devices,
                                              Ready        => Message_Ready_For_Room);
                      if Message_Ready_For_Room then
                         Dsa_Usna_Server.Submit_Room_Data
