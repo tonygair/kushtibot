@@ -86,10 +86,6 @@ package Body Usna_Rooms_Gnoga_Pkg is
          App.Rooms_Record.Title_Label.Create
         (Parent  => App.Form_Array(Rooms_View),
          Content => "<H1> Editing Rooms schedule <H1>");
-         App.Rooms_Record.Back_Button.Create(Parent  => App.Form_Array(Rooms_View) ,
-                                             Content => "Back to  Portfolio",
-                                             ID      => "Room Back Button" );
-         App.Rooms_Record.Back_Button.On_Click_Handler(Handler => Display_Portfolio'Unrestricted_Access);
       end if;
 
          App.Rooms_Record.Max_Room_Id := Total_Rooms;
@@ -103,9 +99,10 @@ package Body Usna_Rooms_Gnoga_Pkg is
             Gnoga.log( "Total Rooms" & Total_Rooms'img);
 
             if Rir.Roomname_Length > 0 then
-               App.Rooms_Record.Room_Buttons.all(count).Create(Parent  => App.Form_Array(Rooms_View),
-                                                   Content => Stringify_Rir(Rir => Rir),
-                                                   ID      => Make_Room_Label(Room => Count));
+                  App.Rooms_Record.Room_Buttons.all(count).Create
+                    (Parent  => App.Form_Array(Rooms_View),
+                     Content => Stringify_Rir(Rir => Rir),
+                     ID      => Make_Room_Label(Room => Count));
 
 
                App.Rooms_Record.Room_Buttons.all(count).On_Click_Handler
@@ -118,6 +115,11 @@ package Body Usna_Rooms_Gnoga_Pkg is
             end;
 
          end loop;
+         App.Rooms_Record.Back_Button.Create(Parent  => App.Form_Array(Rooms_View) ,
+                                             Content => "Back to  Portfolio",
+                                             ID      => "Room Back Button" );
+         App.Rooms_Record.Back_Button.On_Click_Handler(Handler => Display_Portfolio'Unrestricted_Access);
+
       App.Room_Change := false;
    exception
       when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));

@@ -91,7 +91,7 @@ package body Edit_Room_Details_Gnoga_Pkg is
    end Cancel_Button_Label;
 
 
-    Function Transmit_Button_Label (The_Day : in Weekday_Type) return String is
+   Function Transmit_Button_Label (The_Day : in Weekday_Type) return String is
    begin
       return  The_Day'img(1..2) & "TRANSMIT" ;
    exception
@@ -206,7 +206,7 @@ package body Edit_Room_Details_Gnoga_Pkg is
    begin
 
       if App.Edit_Record.The_Week(The_Day) = null then
-        for count in Hour_Day_Schedule_Type'first ..Hour_Day_Schedule_Type'last loop
+         for count in Hour_Day_Schedule_Type'first ..Hour_Day_Schedule_Type'last loop
             App.Edit_Record.The_Weeks_Buttons(The_Day)(count).
               Background_Color(RGBA => B_Blank_Colour);
             App.Edit_Record.The_Weeks_Buttons(The_Day)(count).
@@ -352,7 +352,7 @@ package body Edit_Room_Details_Gnoga_Pkg is
          end;
       end if;
 
-     -- Log_Day_Schedule(App.Edit_Record.The_Week(The_Day).all);
+      -- Log_Day_Schedule(App.Edit_Record.The_Week(The_Day).all);
       Display_Day_Schedule(The_Day => The_Day,
                            App     => App);
    exception
@@ -365,21 +365,21 @@ package body Edit_Room_Details_Gnoga_Pkg is
       The_Id : constant string := Object.Id;
       The_Day : constant Weekday_Type:= Day_From_Id(The_Id);
 
-     begin
+   begin
 
       Deallocate_Day_Schedule_Access(App.Edit_Record.The_Week(The_Day));
-       Display_Day_Schedule(The_Day => The_Day,
+      Display_Day_Schedule(The_Day => The_Day,
                            App     => App);
    end Cancel_Button_Click;
 
-  procedure Transmit_Button_Click (Object : in out Gnoga.Gui.Base.Base_Type'Class)  is
+   procedure Transmit_Button_Click (Object : in out Gnoga.Gui.Base.Base_Type'Class)  is
       App                  : App_Access := App_Access(Object.Connection_Data);
       The_Id : constant string := Object.Id;
       The_Day : constant Weekday_Type:= Day_From_Id(The_Id);
       Transmit : boolean := false;
       Schedule : Day_Schedule_Access := App.Edit_Record.The_Week(The_Day);
       Success : boolean;
-     begin
+   begin
       if not (Schedule = null) and then
         (Schedule.all'length > 1) then
          Dsa_Usna_Server.Modify_Room_Mode_Temperatures
@@ -392,8 +392,8 @@ package body Edit_Room_Details_Gnoga_Pkg is
             Room_Number => App.Edit_Record.This_Room,
             The_Day => The_Day,
             Schedule => Schedule.all,
-           Success => Success);
-        -- we also need to transmit the schedule change to the database and the pi
+            Success => Success);
+         -- we also need to transmit the schedule change to the database and the pi
       end if;
 
    end Transmit_Button_Click;
@@ -405,11 +405,11 @@ package body Edit_Room_Details_Gnoga_Pkg is
                                        (App.Edit_Record.Current_Mode)*10));
       App.Edit_Record.Mode_Button.Text(App.Edit_Record.Current_Mode'img);
       App.Edit_Record.Temp_Reading.Text(App.Edit_Record.Mode_Temperatures
-                                       (App.Edit_Record.Current_Mode)'img);
+                                        (App.Edit_Record.Current_Mode)'img);
    end Redisplay_Mode_Values;
 
 
-    procedure Minus_A_Degree_Click(Object : in out Gnoga.Gui.Base.Base_Type'Class) is
+   procedure Minus_A_Degree_Click(Object : in out Gnoga.Gui.Base.Base_Type'Class) is
       App : App_Access := App_Access(Object.Connection_Data);
 
    begin
@@ -427,7 +427,7 @@ package body Edit_Room_Details_Gnoga_Pkg is
       App : App_Access := App_Access(Object.Connection_Data);
 
    begin
-        App.Edit_Record.Mode_Temperatures(App.Edit_Record.Current_Mode) :=
+      App.Edit_Record.Mode_Temperatures(App.Edit_Record.Current_Mode) :=
         App.Edit_Record.Mode_Temperatures(App.Edit_Record.Current_Mode) + 0.5;
       --Gnoga.log("Mode is " & App.Edit_Record.Current_Mode'img
       --          & " Mode Temp is " & App.Edit_Record.Mode_Temperatures(App.Edit_Record.Current_Mode)'img);
@@ -463,130 +463,142 @@ package body Edit_Room_Details_Gnoga_Pkg is
    begin
       -- update room information
       -- depends on This_Room being set by the ROOMS_VIEW
-      App.Edit_Record.Room_Data := new Room_Information_Record
-        '(Dsa_Usna_Server.Get_Room_Data(Location => App.Location_id,
-                                        Room     => App.Edit_Record.This_Room));
+      if App.Edit_Record.This_Room /= 0 then
+         App.Edit_Record.Room_Data := new Room_Information_Record
+           '(Dsa_Usna_Server.Get_Room_Data(Location => App.Location_id,
+                                           Room     => App.Edit_Record.This_Room));
+         if not App.Edit_Record.Title_Label.Valid then
+         App.Edit_Record.Title_Label.Create
+           (Parent  => App.Form_Array(Room_Edit_View),
+            Content => "<H1> Editing " &  App.Edit_Record.Room_Data.Room_Name & "'s schedule <H1>");
+         else
+            App.Edit_Record.Title_Label.Text
+              (Value =>  "<H1> Editing " &  App.Edit_Record.Room_Data.Room_Name & "'s schedule <H1>");
+         end if;
 
-      App.Edit_Record.Title_Label.Create
-        (Parent  => App.Form_Array(Room_Edit_View),
-         Content => "<H1> Editing " &  App.Edit_Record.Room_Data.Room_Name & "'s schedule <H1>");
-      -- create the Fset and buttons for the temperature / Mode controls
-      App.Edit_Record.Mode_Fset.Create
-        (parent => App.Form_Array(Room_Edit_View));
-       App.Edit_Record.Mode_Fset.Put_Legend   (" Temperature Mode Controls ");
+         -- create the Fset and buttons for the temperature / Mode controls
+         App.Edit_Record.Mode_Fset.Create
+           (parent => App.Form_Array(Room_Edit_View));
+         App.Edit_Record.Mode_Fset.Put_Legend   (" Temperature Mode Controls ");
 
-       App.Edit_Record.Temp_Reading.Create
-        (Parent  => App.Form_Array(Room_Edit_View),
-         Content => "25",
-         ID      => "Room_Temp");
+         App.Edit_Record.Temp_Reading.Create
+           (Parent  => App.Form_Array(Room_Edit_View),
+            Content => "25",
+            ID      => "Room_Temp");
 
-      App.Edit_Record.Temp_Reading.Place_Inside_Bottom_Of
-        (App.Edit_Record.Mode_Fset);
-      App.Edit_Record.Mode_Fset.Put("  ");
-      App.Edit_Record.Minus_Button.Create
-        (Parent  => App.Form_Array(Room_Edit_View),
-         Content => " - ");
-      App.Edit_Record.Minus_Button.Place_Inside_Bottom_Of
-        (App.Edit_Record.Mode_Fset);
- App.Edit_Record.Mode_Fset.Put("  ");
+         App.Edit_Record.Temp_Reading.Place_Inside_Bottom_Of
+           (App.Edit_Record.Mode_Fset);
+         App.Edit_Record.Mode_Fset.Put("  ");
+         App.Edit_Record.Minus_Button.Create
+           (Parent  => App.Form_Array(Room_Edit_View),
+            Content => " - ");
+         App.Edit_Record.Minus_Button.Place_Inside_Bottom_Of
+           (App.Edit_Record.Mode_Fset);
+         App.Edit_Record.Mode_Fset.Put("  ");
 
-      App.Edit_Record.Plus_Button.Create
-        (Parent => App.Form_Array(Room_Edit_View),
-         Content => " + ");
-      App.Edit_Record.Plus_Button.Place_Inside_Bottom_Of
-        (App.Edit_Record.Mode_Fset);
+         App.Edit_Record.Plus_Button.Create
+           (Parent => App.Form_Array(Room_Edit_View),
+            Content => " + ");
+         App.Edit_Record.Plus_Button.Place_Inside_Bottom_Of
+           (App.Edit_Record.Mode_Fset);
 
-      App.Edit_Record.Mode_Button.Create
-        (Parent => App.Form_Array(Room_Edit_View),
-         Content => " Mode ");
-      App.Edit_Record.Mode_Button.Place_Inside_Bottom_Of
-        (App.Edit_Record.Mode_Fset);
- App.Edit_Record.Mode_Fset.Put("  ");
+         App.Edit_Record.Mode_Button.Create
+           (Parent => App.Form_Array(Room_Edit_View),
+            Content => " Mode ");
+         App.Edit_Record.Mode_Button.Place_Inside_Bottom_Of
+           (App.Edit_Record.Mode_Fset);
+         App.Edit_Record.Mode_Fset.Put("  ");
 
-      App.Edit_Record.Minus_Button.On_Click_Handler
-        (Minus_A_Degree_Click'Unrestricted_Access);
-      App.Edit_Record.Plus_Button.On_Click_Handler
-        (Add_A_Degree_Click'Unrestricted_Access);
+         App.Edit_Record.Minus_Button.On_Click_Handler
+           (Minus_A_Degree_Click'Unrestricted_Access);
+         App.Edit_Record.Plus_Button.On_Click_Handler
+           (Add_A_Degree_Click'Unrestricted_Access);
 
-      App.Edit_Record.Mode_Button.On_Click_Handler
-        (Mode_Change_Click'Unrestricted_Access);
+         App.Edit_Record.Mode_Button.On_Click_Handler
+           (Mode_Change_Click'Unrestricted_Access);
 
-      Gnoga.Log("OCES Pre Meter Create ");
+         Gnoga.Log("OCES Pre Meter Create ");
 
-      App.Edit_Record.Temp_Meter.Create
-        (Parent  => App.Form_Array(Room_Edit_View),
-         Value   => 200,
-         High    => integer(Upper_Temp_Limit),
-         Low     => integer(Lower_Temp_Limit),
-         Maximum => Upper_Temp_Limit+50,
-         Minimum => Lower_Temp_Limit- 50,
-         Optimum => 250,
-         ID      => "Temp_Meter");
-      Gnoga.log("OCES hereee.....");
-      App.Edit_Record.Temp_Meter.Place_Inside_Bottom_Of
-        (App.Edit_Record.Mode_Fset);
+         App.Edit_Record.Temp_Meter.Create
+           (Parent  => App.Form_Array(Room_Edit_View),
+            Value   => 200,
+            High    => integer(Upper_Temp_Limit),
+            Low     => integer(Lower_Temp_Limit),
+            Maximum => Upper_Temp_Limit+50,
+            Minimum => Lower_Temp_Limit- 50,
+            Optimum => 250,
+            ID      => "Temp_Meter");
+         Gnoga.log("OCES hereee.....");
+         App.Edit_Record.Temp_Meter.Place_Inside_Bottom_Of
+           (App.Edit_Record.Mode_Fset);
 
 
 
 
 
 
-      -- create the schedule buttons
+         -- create the schedule buttons
 
-      App.Edit_Record.Schedule_Button_Fset.Create
-        (parent => App.Form_Array(Room_Edit_View));
+         App.Edit_Record.Schedule_Button_Fset.Create
+           (parent => App.Form_Array(Room_Edit_View));
 
-      App.Edit_Record.Schedule_Button_Fset.Put_Legend   ("Weekly Schedule ");
+         App.Edit_Record.Schedule_Button_Fset.Put_Legend   ("Weekly Schedule ");
 
-      for Day_Count in Weekday_Type'first..Weekday_Type'last loop
-         App.Edit_Record.Week_Day_Sets(Day_Count).Create
-           (Parent => App.Form_Array(Room_Edit_View));
-         App.Edit_Record.Week_Day_Sets(Day_Count).Put_Legend
-           (Day_Count'img);
-         App.Edit_Record.Week_Day_Sets(Day_Count).Place_Inside_Bottom_Of
-           (App.Edit_Record.Schedule_Button_Fset);
-         App.Edit_Record.Week_Day_Sets(Day_Count).Put_Line
-           (Message => Hour_Display_String);
+         for Day_Count in Weekday_Type'first..Weekday_Type'last loop
+            App.Edit_Record.Week_Day_Sets(Day_Count).Create
+              (Parent => App.Form_Array(Room_Edit_View));
+            App.Edit_Record.Week_Day_Sets(Day_Count).Put_Legend
+              (Day_Count'img);
+            App.Edit_Record.Week_Day_Sets(Day_Count).Place_Inside_Bottom_Of
+              (App.Edit_Record.Schedule_Button_Fset);
+            App.Edit_Record.Week_Day_Sets(Day_Count).Put_Line
+              (Message => Hour_Display_String);
 
-         for Bit_Count in Hour_Day_Schedule_Type loop
-            App.Edit_Record.The_Weeks_Buttons(Day_Count)(Bit_Count).
-              Create(Parent  => App.Form_Array(Room_Edit_View),
-                     Content => Bit_Count'img,
-                     ID      => Schedule_Button_Label(The_Day => Day_Count,
-                                                      The_Bit => Bit_Count) );
-            -- put in side Fset
-            App.Edit_Record.The_Weeks_Buttons(Day_Count)(Bit_Count).
+            for Bit_Count in Hour_Day_Schedule_Type loop
+               App.Edit_Record.The_Weeks_Buttons(Day_Count)(Bit_Count).
+                 Create(Parent  => App.Form_Array(Room_Edit_View),
+                        Content => Bit_Count'img,
+                        ID      => Schedule_Button_Label(The_Day => Day_Count,
+                                                         The_Bit => Bit_Count) );
+               -- put in side Fset
+               App.Edit_Record.The_Weeks_Buttons(Day_Count)(Bit_Count).
+                 Place_Inside_Bottom_Of(App.Edit_Record.Week_Day_Sets(Day_Count));
+               App.Edit_Record.The_Weeks_Buttons(Day_Count)(Bit_Count).On_Click_Handler
+                 (Handler => Schedule_Button_Click'Unrestricted_Access);
+            end loop;
+            -- set up cancel button
+            App.Edit_Record.The_Week_Reset_Buttons(Day_Count).Create
+              (Parent  => App.Form_Array(Room_Edit_View),
+               Content => " Cancel " ,
+               ID      => Cancel_Button_Label(The_Day => Day_Count));
+            App.Edit_Record.The_Week_Reset_Buttons(Day_Count).
               Place_Inside_Bottom_Of(App.Edit_Record.Week_Day_Sets(Day_Count));
-            App.Edit_Record.The_Weeks_Buttons(Day_Count)(Bit_Count).On_Click_Handler
-              (Handler => Schedule_Button_Click'Unrestricted_Access);
+            App.Edit_Record.The_Week_Reset_Buttons(Day_Count).
+              On_Click_Handler(handler => Cancel_Button_Click'Unrestricted_Access);
+
+            -- set up transmit Button
+            App.Edit_Record.The_Week_Transmit_Buttons(Day_Count).Create
+              (Parent  => App.Form_Array(Room_Edit_View),
+               Content => " Send " ,
+               ID      => Transmit_Button_Label(The_Day => Day_Count));
+            App.Edit_Record.The_Week_Transmit_Buttons(Day_Count).
+              Place_Inside_Bottom_Of(App.Edit_Record.Week_Day_Sets(Day_Count));
+            App.Edit_Record.The_Week_Transmit_Buttons(Day_Count).
+              On_Click_Handler(Handler => Transmit_Button_Click'Unrestricted_Access);
+
+
+
+
+            -- new line inside Fset
+            App.Edit_Record.Schedule_Button_Fset.New_Line;
+            App.Edit_Record.Mode_Button.click;
          end loop;
-         -- set up cancel button
-         App.Edit_Record.The_Week_Reset_Buttons(Day_Count).Create
+      else
+         App.Edit_Record.Title_Label.Create
            (Parent  => App.Form_Array(Room_Edit_View),
-            Content => " Cancel " ,
-            ID      => Cancel_Button_Label(The_Day => Day_Count));
-         App.Edit_Record.The_Week_Reset_Buttons(Day_Count).
-           Place_Inside_Bottom_Of(App.Edit_Record.Week_Day_Sets(Day_Count));
-         App.Edit_Record.The_Week_Reset_Buttons(Day_Count).
-           On_Click_Handler(handler => Cancel_Button_Click'Unrestricted_Access);
-
-         -- set up transmit Button
-          App.Edit_Record.The_Week_Transmit_Buttons(Day_Count).Create
-           (Parent  => App.Form_Array(Room_Edit_View),
-            Content => " Send " ,
-            ID      => Transmit_Button_Label(The_Day => Day_Count));
-         App.Edit_Record.The_Week_Transmit_Buttons(Day_Count).
-           Place_Inside_Bottom_Of(App.Edit_Record.Week_Day_Sets(Day_Count));
-         App.Edit_Record.The_Week_Transmit_Buttons(Day_Count).
-           On_Click_Handler(Handler => Transmit_Button_Click'Unrestricted_Access);
-
-
-
-
-         -- new line inside Fset
-         App.Edit_Record.Schedule_Button_Fset.New_Line;
-         App.Edit_Record.Mode_Button.click;
-      end loop;
+            Content => "<H1> No Room selected , go back to rooms view <H1>");
+         App.View_Initial(Room_Edit_View ) := true;
+      end if;
 
    exception
       when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));

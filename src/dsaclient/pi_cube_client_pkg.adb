@@ -284,7 +284,6 @@ Data_Po : Device_Data_Fifo_Po.The_PO;
          declare
             --Room_Register_Success  : boolean;
             Number_Of_Rooms : Natural := Get_Number_Of_Rooms (Client);
-            Number_Of_Devices : Natural;
             Message_Ready_For_Room : boolean := false;
             Last_Query_Done : Ada.Calendar.time :=  Blank_Adatime ;
             --Rir_Array : Rir_Array_Type(1..Room_Id(Number_Of_Rooms));

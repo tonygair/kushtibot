@@ -168,7 +168,12 @@ package body Pi_Specific_Data_Pkg is
       begin
          Gnoga.log(" Room id : " & Room'img & " RBA(Room) " & RBA(Room)'img
                    & " Messages Per Room " & Messages_Per_Room(Room)'img);
-         Ready :=   RBA(Room);
+         if RBA(Room) then
+            Ready := true;
+            RBA(Room) := false;
+         else
+            Ready := false;
+         end if;
 
       exception
          when E : others => Gnoga.Log( "EXCEPTION" & Ada.Exceptions.Exception_Information (E));

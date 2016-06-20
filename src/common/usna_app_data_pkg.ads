@@ -39,28 +39,31 @@ package Usna_App_Data_Pkg is
 
    type Common_Button_Array is Array (View_Select_Type,View_Select_Type) of Common.Button_Type;
 
+   --type Common_Button_Array_Access is access Common_Button_Array;
+
    type Location_Button_Array is array(Location_Id_Type) of Common.Button_Type;
 
-   type Ub2_String_Array is Array
-     (View_Select_Type  range Admin_View..Bookings_View)
+   type Ub_String_Array is Array
+     (View_Select_Type )
      of Unbounded_String;
 
-   type Ub_String_Array is Array
-     (View_Select_Type  range Admin_View..Bookings_View)
-     of Ub2_String_Array;
+--     type Ub_String_Array is Array
+--       (View_Select_Type  range Admin_View..Bookings_View)
+--       of Ub2_String_Array;
+--
    Common_Button_Names : constant Ub_String_Array :=
-     ( Others =>
-         (  To_Unbounded_String("Admin View "),
+     ( To_Unbounded_String("Log Out of System"),
+       To_Unbounded_String("Admin View "),
             To_Unbounded_String("Rooms View "),
             To_Unbounded_String("Edit Room"),
              To_Unbounded_String("Edit User Details"),
            To_Unbounded_String("Bookings View")
-      ));
+      );
 
    type Form_Array_Type is array(View_Select_Type)
      of Form.Form_Type;
 
-   type View_Nav_Array is array(View_Select_Type) of Form.Fieldset.Fieldset_Type;
+   type View_Nav_Array_Type is array(View_Select_Type) of Form.Fieldset.Fieldset_Type;
 
 
     type Login_Window_Data_Record is record
@@ -121,7 +124,7 @@ package Usna_App_Data_Pkg is
       Back_Button : Common.Button_Type;
 
 
-      This_Room : Room_Id_Type;
+      This_Room : Room_Id_Type := 0;
       Room_Data : RIR_Access;
 
       -- for mode and temperature setting
@@ -247,7 +250,9 @@ package Usna_App_Data_Pkg is
 
          Common_Buttons : Common_Button_Array;
 
-         Nav_Array : View_Nav_Array;
+         Nav_Array_Start : View_Select_Type;
+
+         Nav_Array : View_Nav_Array_Type;
          -- data records for each view
 
          Login_Record : Login_Window_Data_Record;

@@ -37,14 +37,19 @@ Package body  View_Change_Pkg is
       case App.Current_View_Selected is
          when Login_View =>
             Usna_Login_View_Gnoga_Pkg.Update_Login_View(App);
+
          when Admin_View =>
             Usna_Admin_Gnoga_Pkg.Update_Admin_View(App);
+
          when Rooms_View =>
             Usna_Rooms_Gnoga_Pkg.Update_Rooms_View(App);
+
          when Room_Edit_View =>
             Edit_Room_Details_Gnoga_Pkg.Update_Edit_Schedule_View(App);
+
          when User_Details_View =>
             User_Details_Gnoga_Pkg.Update_User_Details_View(App);
+
          when Bookings_View =>
             Bookings_Gnoga_Pkg.Update_Bookings_View(App);
 
@@ -72,11 +77,13 @@ Package body  View_Change_Pkg is
 
          when Rooms_View =>
             Usna_Rooms_Gnoga_Pkg.Build_Rooms_View (App);
+
          when Room_Edit_View =>
             Edit_Room_Details_Gnoga_Pkg.Build_Edit_Schedule_View(App);
 
-       when User_Details_View =>
+         when User_Details_View =>
             User_Details_Gnoga_Pkg.Build_User_Details_View(App);
+
          when Bookings_View =>
             Bookings_Gnoga_Pkg.Build_Bookings_View(App);
 
@@ -167,6 +174,32 @@ Package body  View_Change_Pkg is
 
 
    -- there has to be a better way to do this
+     procedure Go_To_User_Details_View
+     (Object : in out Gnoga.Gui.Base.Base_Type'Class)
+   is
+      App : App_Access := App_Access (Object.Connection_Data);
+
+   begin
+      App.Requested_View_Selected := User_Details_View;
+      New_Content_View (App);
+   exception
+      when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
+
+   end Go_To_User_Details_View;
+
+     procedure Go_To_Bookings_View
+     (Object : in out Gnoga.Gui.Base.Base_Type'Class)
+   is
+      App : App_Access := App_Access (Object.Connection_Data);
+
+   begin
+      App.Requested_View_Selected := Bookings_View;
+      New_Content_View (App);
+   exception
+      when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
+
+   end Go_To_Bookings_View;
+
    procedure Go_To_Rooms_View
      (Object : in out Gnoga.Gui.Base.Base_Type'Class)
    is
@@ -198,48 +231,60 @@ Package body  View_Change_Pkg is
 
       View : View_Select_Type := App.Current_View_Selected;
       Am_I_An_Admin : boolean := App.Admin;
+      type Function_Access is access procedure  (Object : in out Gnoga.Gui.Base.Base_Type'Class);
+      Function_Array : array(View_Select_Type) of Function_Access :=
+        (Login_View => null,
+         Admin_View => Go_To_Admin_View'Access,
+         Rooms_View => Go_To_Rooms_View'Access,
+         Room_Edit_View => Go_To_Edit_Room_View'access,
+         User_Details_View => Go_To_User_Details_View'access,
+         Bookings_View => Go_To_Bookings_View'access);
+
    begin
 
       -- Make The Fieldset to contain the navigation buttons
       -- may be this will work
-      if App.Admin then
-         App.Nav_Array(View).Create
+      if Am_I_An_Admin then
+         App.Nav_Array_Start := Admin_View;
+      else
+         App.Nav_Array_Start := Rooms_View;
+      end if;
+
+      Gnoga.log("Last View is " & View_Nav_Array_Type'last'img);
+
+      for count in App.Nav_Array_Start.. View_Nav_Array_Type'last loop
+
+            App.Nav_Array(View).Create
            (Parent => App.Form_Array(View));
          App.Nav_Array(View).Place_Inside_Top_Of
            (Target => App.Form_Array(View));
 
          declare
-            Button_Content : constant string := "Rooms";
+            Button_Content : constant string :=
+              Ada.Strings.Unbounded.To_String(Usna_App_Data_Pkg.Common_Button_Names(count));
          begin
-            if View /= Rooms_View then
-               App.Common_Buttons(Rooms_View,View).Create
+            if View /= count then
+               App.Common_Buttons(count,View).Create
                  (Parent  => App.View_Array(View),
                   Content => Button_Content);
-               App.Common_Buttons(Rooms_View,View).On_Click_handler
-                 (Handler => Go_To_Rooms_View'Unrestricted_Access);
-               App.Common_Buttons(Rooms_View,View).Place_Inside_Top_Of
+
+               App.Common_Buttons(count,View).On_Click_handler
+                 (Handler => Function_Array(count).all'unrestricted_access);
+
+               App.Common_Buttons(count,View).Place_Inside_Top_Of
                  (Target => App.Nav_Array(View));
+
             end if;
 
          end;
 
+      end loop;
 
 
-         declare
-            Button_Content : constant string := "Admin";
-         begin
-            if View /= Admin_View and App.Admin then
-               App.Common_Buttons(Admin_View,View).Create
-                 (Parent  => App.View_Array(View),
-                  Content => Button_Content);
-               App.Common_Buttons(Admin_View,View).On_Click_handler
-                 (Handler => Go_To_Admin_View'Unrestricted_Access);
-               App.Common_Buttons(Admin_View,View).Place_Inside_Top_Of
-                 (Target => App.Nav_Array(View));
-            end if;
-         end;
 
-      end if;
+
+
+
 
 
 
@@ -258,7 +303,7 @@ Package body  View_Change_Pkg is
    begin
       -- for testing until password api is fitted
       --App.Admin := true;
-     -- App.Location_id := 1;
+      -- App.Location_id := 1;
       -----****
 
       if App.Admin then
