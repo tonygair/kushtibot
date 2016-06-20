@@ -86,6 +86,7 @@ package Body Usna_Rooms_Gnoga_Pkg is
          App.Rooms_Record.Title_Label.Create
         (Parent  => App.Form_Array(Rooms_View),
          Content => "<H1> Editing Rooms schedule <H1>");
+            App.Rooms_Record.Title_Label.Place_After(Target => App.Nav_Array(Rooms_View));
       end if;
 
          App.Rooms_Record.Max_Room_Id := Total_Rooms;

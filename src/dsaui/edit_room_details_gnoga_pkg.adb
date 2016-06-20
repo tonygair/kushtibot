@@ -471,6 +471,7 @@ package body Edit_Room_Details_Gnoga_Pkg is
          App.Edit_Record.Title_Label.Create
            (Parent  => App.Form_Array(Room_Edit_View),
             Content => "<H1> Editing " &  App.Edit_Record.Room_Data.Room_Name & "'s schedule <H1>");
+            App.Edit_Record.Title_Label.Place_After(App.Nav_Array(Room_Edit_View));
          else
             App.Edit_Record.Title_Label.Text
               (Value =>  "<H1> Editing " &  App.Edit_Record.Room_Data.Room_Name & "'s schedule <H1>");
@@ -480,6 +481,8 @@ package body Edit_Room_Details_Gnoga_Pkg is
          App.Edit_Record.Mode_Fset.Create
            (parent => App.Form_Array(Room_Edit_View));
          App.Edit_Record.Mode_Fset.Put_Legend   (" Temperature Mode Controls ");
+
+         App.Edit_Record.Mode_Fset.Place_After(App.Edit_Record.Title_Label);
 
          App.Edit_Record.Temp_Reading.Create
            (Parent  => App.Form_Array(Room_Edit_View),
