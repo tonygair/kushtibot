@@ -60,7 +60,6 @@ Package body  View_Change_Pkg is
 
    end Update_View;
 
-    procedure Build_And_Connect_Common_Buttons (App : in out App_Access);
 
 
    procedure Build_View
@@ -69,7 +68,6 @@ Package body  View_Change_Pkg is
       --App : App_Access := App_Access (Object.Connection_Data);
    begin
       Gnoga.log(" Build View " & App.Current_View_Selected'img );
-      Build_And_Connect_Common_Buttons(App);
 
       case App.Current_View_Selected is
          when Login_View =>
@@ -250,38 +248,38 @@ Package body  View_Change_Pkg is
       Gnoga.log("Last View is " & View_Nav_Array_Type'last'img);
 
 
+      for view_count in  App.Nav_Array_Start.. View_Nav_Array_Type'last loop
+         for count in App.Nav_Array_Start.. View_Nav_Array_Type'last loop
 
-      for count in App.Nav_Array_Start.. View_Nav_Array_Type'last loop
 
+            App.Nav_Array(view_count).Create
+              (Parent => App.Form_Array(view_count));
+            App.Nav_Array(view_count).Place_Inside_Top_Of
+              (Target => App.Form_Array(view_count));
 
-         App.Nav_Array(View).Create
-           (Parent => App.Form_Array(View));
-         App.Nav_Array(View).Place_Inside_Top_Of
-           (Target => App.Form_Array(View));
+            declare
+               Button_Content : constant string :=
+                 Ada.Strings.Unbounded.To_String(Usna_App_Data_Pkg.Common_Button_Names(count));
+            begin
+               if view_count /= count then
+                  App.Common_Buttons(count,view_count).Create
+                    (Parent  => App.View_Array(view_count),
+                     Content => Button_Content);
 
-         declare
-            Button_Content : constant string :=
-              Ada.Strings.Unbounded.To_String(Usna_App_Data_Pkg.Common_Button_Names(count));
-         begin
-            if View /= count then
-               App.Common_Buttons(count,View).Create
-                 (Parent  => App.View_Array(View),
-                  Content => Button_Content);
+                  App.Common_Buttons(count,view_count).On_Click_handler
+                    (Handler => Function_Array(count).all'unrestricted_access);
 
-               App.Common_Buttons(count,View).On_Click_handler
-                 (Handler => Function_Array(count).all'unrestricted_access);
+                  App.Common_Buttons(count,view_count).Place_Inside_Top_Of
+                    (Target => App.Nav_Array(view_count));
 
-               App.Common_Buttons(count,View).Place_Inside_Top_Of
-                 (Target => App.Nav_Array(View));
+               end if;
+            exception
+               when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
 
-            end if;
-         exception
-            when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
+            end;
 
-         end;
-
+         end loop;
       end loop;
-
 
 
 

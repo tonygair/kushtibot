@@ -42,6 +42,7 @@ package body Usna_Login_View_Gnoga_Pkg is
 
          Gnoga.log("Good Password : No serial assigned ");
       else
+      View_Change_Pkg.Build_And_Connect_Common_Buttons (App => App);
 
          if not App.Admin then
             Gnoga.log(" Not an Admin, but the user has a good password and has registered a serial number ");
