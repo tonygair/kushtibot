@@ -279,6 +279,7 @@ Package body  View_Change_Pkg is
             end;
 
          end loop;
+         App.Nav_Array(view_count).Place_Inside_Top_Of(Target => App.Form_Array(view_count));
       end loop;
 
 
