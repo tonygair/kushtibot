@@ -60,6 +60,8 @@ Package body  View_Change_Pkg is
 
    end Update_View;
 
+    procedure Build_And_Connect_Common_Buttons (App : in out App_Access);
+
 
    procedure Build_View
      (App : in out App_Access)
@@ -67,6 +69,7 @@ Package body  View_Change_Pkg is
       --App : App_Access := App_Access (Object.Connection_Data);
    begin
       Gnoga.log(" Build View " & App.Current_View_Selected'img );
+      Build_And_Connect_Common_Buttons(App);
 
       case App.Current_View_Selected is
          when Login_View =>
@@ -95,7 +98,6 @@ Package body  View_Change_Pkg is
 
    end Build_View;
 
-   procedure Build_And_Connect_Common_Buttons (App : in out App_Access);
 
    procedure Show_View
      (App : in out App_Access)
@@ -247,7 +249,10 @@ Package body  View_Change_Pkg is
 
       Gnoga.log("Last View is " & View_Nav_Array_Type'last'img);
 
+
+
       for count in App.Nav_Array_Start.. View_Nav_Array_Type'last loop
+
 
          App.Nav_Array(View).Create
            (Parent => App.Form_Array(View));
@@ -320,9 +325,11 @@ Package body  View_Change_Pkg is
          Height  => "20px");
 
       for count in View_Select_Type loop
-         App.View_Array(count).Create(Parent => Main_Window);
+         Gnoga.log("View Create being called for  " & count'img);
+        App.View_Array(count).Create(Parent => Main_Window);
+
          Gnoga.log("View Created " & count'img);
-          Build_And_Connect_Common_Buttons(App);
+
          App.Form_Array(count).Create
            (Parent => App.View_Array(count));
          App.View_Array(count).Visible(false);
