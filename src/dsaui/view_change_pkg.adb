@@ -105,12 +105,7 @@ Package body  View_Change_Pkg is
 
 
       if App.View_Initial (App.Current_View_Selected) then
-         if App.Current_View_Selected = Login_View then
-            null;
-         else
 
-            Build_And_Connect_Common_Buttons(App);
-         end if;
          App.View_Initial (App.Current_View_Selected) := false;
          Gnoga.log("building view");
          Build_View (App);
@@ -174,7 +169,7 @@ Package body  View_Change_Pkg is
 
 
    -- there has to be a better way to do this
-     procedure Go_To_User_Details_View
+   procedure Go_To_User_Details_View
      (Object : in out Gnoga.Gui.Base.Base_Type'Class)
    is
       App : App_Access := App_Access (Object.Connection_Data);
@@ -187,7 +182,7 @@ Package body  View_Change_Pkg is
 
    end Go_To_User_Details_View;
 
-     procedure Go_To_Bookings_View
+   procedure Go_To_Bookings_View
      (Object : in out Gnoga.Gui.Base.Base_Type'Class)
    is
       App : App_Access := App_Access (Object.Connection_Data);
@@ -241,7 +236,7 @@ Package body  View_Change_Pkg is
          Bookings_View => Go_To_Bookings_View'access);
 
    begin
-
+     Gnoga.log("build connect buttons called ");
       -- Make The Fieldset to contain the navigation buttons
       -- may be this will work
       if Am_I_An_Admin then
@@ -254,7 +249,7 @@ Package body  View_Change_Pkg is
 
       for count in App.Nav_Array_Start.. View_Nav_Array_Type'last loop
 
-            App.Nav_Array(View).Create
+         App.Nav_Array(View).Create
            (Parent => App.Form_Array(View));
          App.Nav_Array(View).Place_Inside_Top_Of
            (Target => App.Form_Array(View));
@@ -275,6 +270,8 @@ Package body  View_Change_Pkg is
                  (Target => App.Nav_Array(View));
 
             end if;
+         exception
+            when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
 
          end;
 
@@ -325,6 +322,7 @@ Package body  View_Change_Pkg is
       for count in View_Select_Type loop
          App.View_Array(count).Create(Parent => Main_Window);
          Gnoga.log("View Created " & count'img);
+          Build_And_Connect_Common_Buttons(App);
          App.Form_Array(count).Create
            (Parent => App.View_Array(count));
          App.View_Array(count).Visible(false);
