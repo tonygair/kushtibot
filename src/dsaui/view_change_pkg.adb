@@ -249,13 +249,15 @@ Package body  View_Change_Pkg is
 
 
       for view_count in  App.Nav_Array_Start.. View_Nav_Array_Type'last loop
-         for count in App.Nav_Array_Start.. View_Nav_Array_Type'last loop
-
-
-            App.Nav_Array(view_count).Create
+           App.Nav_Array(view_count).Create
               (Parent => App.Form_Array(view_count));
             App.Nav_Array(view_count).Place_Inside_Top_Of
               (Target => App.Form_Array(view_count));
+            Gnoga.log( view_count'img & "placed " );
+         for count in App.Nav_Array_Start.. View_Nav_Array_Type'last loop
+
+
+
 
             declare
                Button_Content : constant string :=
@@ -279,7 +281,7 @@ Package body  View_Change_Pkg is
             end;
 
          end loop;
-         App.Nav_Array(view_count).Place_Inside_Top_Of(Target => App.Form_Array(view_count));
+
       end loop;
 
 
