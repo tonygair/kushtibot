@@ -89,7 +89,7 @@ package Usna_App_Data_Pkg is
       Button_Creation : Location_Boolean_Array_Type := (others => false);
       Max_Location_Id : Location_Id_Type;
       Title_Label : Common.Span_Type;
-
+      Legal_Warning_Label : Common.Span_Type;
       --Device_Input : Form.Text_Type;
 
 
@@ -98,6 +98,7 @@ package Usna_App_Data_Pkg is
    type Rooms_Window_Data_Record is record
 
       Title_Label : Common.Span_Type;
+      Instructions_Label : Common.Span_Type;
       Back_Button : Common.Button_Type;
       Room_Buttons: Room_Button_Array_Access;
       Max_Room_Id, Current_Room_Id : Room_Id_Type;

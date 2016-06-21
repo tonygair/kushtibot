@@ -6,6 +6,7 @@ with View_Change_Pkg;
 with Gnoga.Gui.Base;
 with Ada.Exceptions;
 with Label_Function_Pkg;
+with Ui_Text_Pkg;
 package body Usna_Admin_Gnoga_Pkg is
 
 
@@ -44,8 +45,18 @@ package body Usna_Admin_Gnoga_Pkg is
    procedure Build_Admin_View
      (App : in out App_Access) is
 
+
+
    begin
-      -- need to use a
+
+      App.Admin_Record.Title_Label.Create
+        (Parent => App.Form_Array(Admin_View),
+         Content => Ui_Text_Pkg.Admin_Screen_Text);
+
+      App.Form_Array(Admin_View).New_Line;
+
+
+
       for Count in 1..Dsa_Usna_server.Get_Max_Location loop
 
 
@@ -70,9 +81,21 @@ package body Usna_Admin_Gnoga_Pkg is
                App.Admin_Record.Button_Creation(Count) := true;
 
             end if;
+            App.Form_Array(Admin_View).New_Line;
+
          end if;
 
       end loop;
+      App.View_Array(Admin_View).New_Line;
+      App.View_Array(Admin_View).New_Line;
+
+      if not App.Admin_Record.Legal_Warning_Label.Valid then
+          App.Admin_Record.Legal_Warning_Label.Create
+        (Parent => App.Form_Array(Admin_View),
+         Content => Ui_Text_Pkg.Legal_Warning_Text);
+      end if;
+
+
    exception
       when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
 

@@ -23,6 +23,7 @@ with Dsa_Usna_Server;
 with View_Change_Pkg;
 with Deallocate_And_Access_Types_Pkg;
 with UI_Related_Access_Types_Pkg; use UI_Related_Access_Types_Pkg;
+with Ui_Text_Pkg;
 package Body Usna_Rooms_Gnoga_Pkg is
 
    --- this package will be used to create a gnoga interface to create rooms, and attach nodes
@@ -41,23 +42,23 @@ package Body Usna_Rooms_Gnoga_Pkg is
 
    procedure Go_to_Edit_Room  (Object : in out Gnoga.Gui.Base.Base_Type'Class) is
 
-        The_Id : constant string := Object.Id;
+      The_Id : constant string := Object.Id;
       Room_Id : Room_Id_Type :=
         Label_Function_Pkg.Get_Room_Id_From_Label(The_Id);
-       App : App_Access := App_Access (Object.Connection_Data);
+      App : App_Access := App_Access (Object.Connection_Data);
 
    begin
       Gnoga.log("Go to room calledd for room id " & Room_Id'img);
 
       App.Edit_Record.This_Room:= Room_Id;
       App.Requested_View_Selected:= Room_Edit_View;
-   View_Change_Pkg.New_Content_View(App => App);
+      View_Change_Pkg.New_Content_View(App => App);
 
-     end Go_to_Edit_Room;
+   end Go_to_Edit_Room;
    -- end event click procedures
 
    procedure Display_Portfolio (Object : in out Gnoga.Gui.Base.Base_Type'Class) is
-       App : App_Access := App_Access (Object.Connection_Data);
+      App : App_Access := App_Access (Object.Connection_Data);
 
    begin
       App.Location_id := 0;
@@ -66,11 +67,11 @@ package Body Usna_Rooms_Gnoga_Pkg is
 
    end Display_Portfolio;
 
-      procedure Build_Rooms_View
-        (App : in out App_Access) is
-         --App : App_Access := App_Access(Object.Connection_Data);
+   procedure Build_Rooms_View
+     (App : in out App_Access) is
+      --App : App_Access := App_Access(Object.Connection_Data);
 
-         Total_Rooms : Room_Id_Type;
+      Total_Rooms : Room_Id_Type;
 
    begin
       Total_Rooms := Dsa_Usna_Server.Get_Number_Of_Rooms(App.Location_id);
@@ -78,16 +79,27 @@ package Body Usna_Rooms_Gnoga_Pkg is
          New_Room_Button_Array : Room_Button_Array_Type
            (1..Total_Rooms);
       begin
+         -- check fixed assets!
+         Gnoga.log ("Number of Rooms to display := " &Total_Rooms'img & "for " & App.Location_id'img);
 
-      Gnoga.log ("Number of Rooms to display := " &Total_Rooms'img & "for " & App.Location_id'img);
-      if App.Rooms_Record.Back_Button.ID = "Room Back Button" or App.Admin then
-         null;
-      else
-         App.Rooms_Record.Title_Label.Create
-        (Parent  => App.Form_Array(Rooms_View),
-         Content => "<H1> Editing Rooms schedule <H1>");
+         if not App.Rooms_Record.Title_Label.Valid then
+
+
+            App.Rooms_Record.Title_Label.Create
+              (Parent  => App.Form_Array(Rooms_View),
+               Content => "<H1> Editing Rooms schedule <H1>" );
+
             App.Rooms_Record.Title_Label.Place_After(Target => App.Nav_Array(Rooms_View));
-      end if;
+
+            App.Form_Array(Rooms_View).New_Line;
+
+            App.Rooms_Record.Instructions_Label.Create
+              (Parent => App.Form_Array(Rooms_View),
+               Content => Ui_Text_Pkg.Room_Instruction_Text);
+
+
+         end if;
+         App.Form_Array(Rooms_View).New_Line;
 
          App.Rooms_Record.Max_Room_Id := Total_Rooms;
          for count in 1..Total_Rooms loop
@@ -95,35 +107,38 @@ package Body Usna_Rooms_Gnoga_Pkg is
                Rir : Room_Information_Record := Dsa_Usna_Server.Get_Room_Data
                  (Location => App.Location_id,
                   Room     => count);
-         begin
-            App.Rooms_Record.Room_Buttons := new Room_Button_Array_Type(1..Total_Rooms);
-            Gnoga.log( "Total Rooms" & Total_Rooms'img);
+            begin
+               App.Rooms_Record.Room_Buttons := new Room_Button_Array_Type(1..Total_Rooms);
 
-            if Rir.Roomname_Length > 0 then
+               Gnoga.log( "Total Rooms" & Total_Rooms'img);
+
+               if Rir.Roomname_Length > 0 then
                   App.Rooms_Record.Room_Buttons.all(count).Create
                     (Parent  => App.Form_Array(Rooms_View),
                      Content => Stringify_Rir(Rir => Rir),
                      ID      => Make_Room_Label(Room => Count));
 
 
-               App.Rooms_Record.Room_Buttons.all(count).On_Click_Handler
-                 (Handler =>   Go_to_Edit_Room'Unrestricted_Access);
-             --New_Room_Button_Array(count).
+                  App.Rooms_Record.Room_Buttons.all(count).On_Click_Handler
+                    (Handler =>   Go_to_Edit_Room'Unrestricted_Access);
+                  --New_Room_Button_Array(count).
 
-               App.Form_Array(Rooms_View).New_Line;
-            end if;
+                  App.Form_Array(Rooms_View).New_Line;
+               end if;
+            exception
+               when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
 
             end;
 
          end loop;
-         App.Rooms_Record.Back_Button.Create(Parent  => App.Form_Array(Rooms_View) ,
-                                             Content => "Back to  Portfolio",
-                                             ID      => "Room Back Button" );
-         App.Rooms_Record.Back_Button.On_Click_Handler(Handler => Display_Portfolio'Unrestricted_Access);
+--           App.Rooms_Record.Back_Button.Create(Parent  => App.Form_Array(Rooms_View) ,
+--                                               Content => "Back to  Portfolio",
+--                                               ID      => "Room Back Button" );
+--           App.Rooms_Record.Back_Button.On_Click_Handler(Handler => Display_Portfolio'Unrestricted_Access);
 
-      App.Room_Change := false;
-   exception
-      when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
+         App.Room_Change := false;
+      exception
+         when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
 
 
       end;
