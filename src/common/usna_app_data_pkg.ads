@@ -126,6 +126,7 @@ package Usna_App_Data_Pkg is
 
 
       This_Room : Room_Id_Type := 0;
+      Reset_Edit_Room_Ui : boolean := true;
       Room_Data : RIR_Access;
 
       -- for mode and temperature setting

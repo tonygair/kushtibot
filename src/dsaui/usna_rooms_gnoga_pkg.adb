@@ -48,7 +48,7 @@ package Body Usna_Rooms_Gnoga_Pkg is
       App : App_Access := App_Access (Object.Connection_Data);
 
    begin
-      Gnoga.log("Go to room calledd for room id " & Room_Id'img);
+      Gnoga.log("Go to room called for room id " & Room_Id'img);
 
       App.Edit_Record.This_Room:= Room_Id;
       App.Requested_View_Selected:= Room_Edit_View;

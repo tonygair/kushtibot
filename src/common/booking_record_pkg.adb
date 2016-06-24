@@ -5,13 +5,15 @@ package body Booking_Record_Pkg is
 
    type Booking_Table_Pkg is new Tables(Tag => Booking_Record);
 
-    function Booking_Hash (The_Record : in Booking_Record) return string;
+   function Booking_Hash (The_Record : in Booking_Record) return string;
 
    protected type Booking_Po is
 
       function Get_All_Bookings return Booking_Record_Array;
 
-      function Get_Room_Bookings (Room_Id : Room_Id_Type) return Booking_Record_Array;
+      function Get_Room_Bookings (Room_Id : in Room_Id_Type) return Booking_Record_Array;
+
+      function Get_Room_Bookings_By_Day (Room_Id : in Room_Id_Type;
 
       procedure Purge_Past_Bookings;
 
@@ -29,4 +31,10 @@ package body Booking_Record_Pkg is
    type Booking_Po_Access_Array is array ( Location_Id_Type) of Booking_Po_Access;
 
 
-   type Room_Bookable_Array is array (Location_Id_Type) of boolean;
+   type Location_Room_Bookable_Array is array (Location_Id_Type) of boolean;
+
+
+end Booking_Record_Pkg;
+
+
+

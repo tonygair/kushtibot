@@ -1,6 +1,6 @@
 package body  Bookings_Gnoga_Pkg is
 
-procedure Build_Bookings_View
+   procedure Build_Bookings_View
      (App : in out App_Access) is
 
    begin
@@ -13,7 +13,7 @@ procedure Build_Bookings_View
    end Build_Bookings_View;
 
 
-procedure Update_Bookings_View
+   procedure Update_Bookings_View
      (App : in out App_Access) is
    begin
       Build_Bookings_View(App => App);

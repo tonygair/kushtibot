@@ -1,28 +1,18 @@
-with Identity_Types_Pkg;
-
+with Identity_Types_Pkg; use Identity_Types_Pkg;
+with Booking_Types_Pkg; use Booking_Types_Pkg;
 
 
 package Booking_Record_Pkg is
 
-   type Booking_Record is record
-      The_Location : Identity_Types_Pkg.Location_Id_Type;
-      Room_Id : Identity_Types_Pkg.Room_Id_Type;
-      The_Time : Long_Integer;
-      Booking_Length : Duration;
-      Booking_Text : String (1..50);
-   end record;
 
-   Blank_Booking_Record : constant Booking_Record :=
+
+     Blank_Booking_Record : constant Booking_Record :=
      (The_Location => 0,
       Room_Id => 0,
       The_Time => 0,
       Booking_Length => 0.0,
       Booking_Text => (others => 'X'));
 
-   subtype Max_Bookings_Type is Natural range 0..1000;
-
-   type Booking_Record_Array is array (Max_Bookings_Type range <>)
-     of Booking_Record;
 
    Blank_Booking_Array : constant Booking_Record_Array (1..0) :=
      (others => Blank_Booking_Record);

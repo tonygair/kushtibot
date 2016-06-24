@@ -302,7 +302,6 @@ package body Edit_Room_Details_Gnoga_Pkg is
       The_Day : constant Weekday_Type:= Day_From_Id(The_Id);
       Button_Number : constant Hour_Day_Schedule_Type :=
         Hour_Day_Schedule_Type'value(The_Id(3..The_Id'length - 2));
-      -- VISIBLE procedures to other packages
 
    begin
 
@@ -615,7 +614,32 @@ package body Edit_Room_Details_Gnoga_Pkg is
      (App  : in out App_Access) is
 
    begin
-      null;
+      if App.Edit_Record.This_Room /= 0 then
+         App.Edit_Record.Room_Data := new Room_Information_Record
+           '(Dsa_Usna_Server.Get_Room_Data(Location => App.Location_id,
+                                           Room     => App.Edit_Record.This_Room));
+
+         if not App.Edit_Record.Title_Label.Valid then
+            App.Edit_Record.Title_Label.Create
+              (Parent  => App.Form_Array(Room_Edit_View),
+               Content => "<H1> Editing " &  App.Edit_Record.Room_Data.Room_Name & "'s schedule <H1>");
+            App.Edit_Record.Title_Label.Place_After(App.Nav_Array(Room_Edit_View));
+         else
+            App.Edit_Record.Title_Label.Text
+              (Value =>  "<H1> Editing " &  App.Edit_Record.Room_Data.Room_Name & "'s schedule <H1>");
+         end if;
+
+         Redisplay_Mode_Values(App => App);
+
+         for Count in Weekday_Type'first..Weekday_Type'last loop
+            Display_Day_Schedule
+              (The_Day => Count,
+               App     => App);
+
+         end loop;
+      end if;
+
+
    exception
       when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
 
