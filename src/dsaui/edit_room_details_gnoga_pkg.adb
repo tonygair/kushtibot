@@ -473,7 +473,7 @@ package body Edit_Room_Details_Gnoga_Pkg is
             App.Edit_Record.Title_Label.Place_After(App.Nav_Array(Room_Edit_View));
          else
             App.Edit_Record.Title_Label.Text
-              (Value =>  "<H1> Editing " &  App.Edit_Record.Room_Data.Room_Name & "'s schedule <H1>");
+              (Value =>  " Editing " &  App.Edit_Record.Room_Data.Room_Name & "'s schedule ");
          end if;
 
          -- create the Fset and buttons for the temperature / Mode controls
@@ -626,7 +626,7 @@ package body Edit_Room_Details_Gnoga_Pkg is
             App.Edit_Record.Title_Label.Place_After(App.Nav_Array(Room_Edit_View));
          else
             App.Edit_Record.Title_Label.Text
-              (Value =>  "<H1> Editing " &  App.Edit_Record.Room_Data.Room_Name & "'s schedule <H1>");
+              (Value =>  " Editing " &  App.Edit_Record.Room_Data.Room_Name & "'s schedule ");
          end if;
 
          Redisplay_Mode_Values(App => App);
