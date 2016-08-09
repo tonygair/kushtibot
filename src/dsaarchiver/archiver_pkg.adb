@@ -219,7 +219,16 @@ package body Archiver_Pkg is
       Execute(Command);
 
    exception
-      when E : others => Gnoga.log (Ada.Exceptions.Exception_Information (E));
+      when E : others =>
+         Gnoga.log(" parameters :- location " & Location'img
+                   & " , Room_Number " & Room.Room'img
+                   & " , Setpoint " & Room.Set_Point'img
+                   & " , Temperature " & Room.Actual'img
+                   & " , Room_Name " & Room.Room_Name
+                   & " , Unix_Time " & Ada.Calendar.Conversions.To_Unix_Time
+                                                             (Ada.Calendar.Clock)'img);
+
+         Gnoga.log (Ada.Exceptions.Exception_Information (E));
 
    end Archive_Room_Data;
 
